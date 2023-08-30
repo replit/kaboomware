@@ -1,5 +1,9 @@
 import type { Game } from "./main"
 
+const NUM_FLIES = 3
+const FLY_SPEED = 400
+const FLY_MARGIN = 160
+
 const squeezeGame: Game = {
 	prompt: "Squeeze!",
 	author: "tga",
@@ -11,8 +15,6 @@ const squeezeGame: Game = {
 		k.loadAseprite("fly", "sprites/fly.png", "sprites/fly.json")
 	},
 	onStart: (k, api) => {
-		const FLY_SPEED = 400
-		const FLY_MARGIN = 160
 		const buzzSound = k.play("fly", {
 			loop: true,
 			volume: 0.2,
@@ -27,20 +29,19 @@ const squeezeGame: Game = {
 					k.rand(FLY_MARGIN, api.width - FLY_MARGIN),
 					k.rand(FLY_MARGIN, api.height - FLY_MARGIN),
 				),
-				k.sprite("fly"),
+				k.sprite("fly", { anim: "fly" }),
 				k.anchor("center"),
 				"fly",
 			])
-			fly.play("fly", { speed: 10 })
 			fly.onUpdate(() => {
 				fly.pos.x += k.rand(-FLY_SPEED, FLY_SPEED) * k.dt()
 				fly.pos.y += k.rand(-FLY_SPEED, FLY_SPEED) * k.dt()
 			})
 			return fly
 		}
-		scene.add(makeFly())
-		scene.add(makeFly())
-		scene.add(makeFly())
+		for (let i = 0; i < NUM_FLIES; i++) {
+			scene.add(makeFly())
+		}
 		const handOffset = k.vec2(-30, -140)
 		const hand = scene.add([
 			k.pos(k.mousePos().add(handOffset)),

@@ -1,0 +1,37 @@
+{ "frames": [
+   {
+    "filename": "bao 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 158, "h": 131 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 158, "h": 131 },
+    "sourceSize": { "w": 158, "h": 131 },
+    "duration": 100
+   },
+   {
+    "filename": "bao 1.ase",
+    "frame": { "x": 158, "y": 0, "w": 158, "h": 131 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 158, "h": 131 },
+    "sourceSize": { "w": 158, "h": 131 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "bao.png",
+  "format": "RGBA8888",
+  "size": { "w": 316, "h": 131 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "run", "from": 0, "to": 1, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

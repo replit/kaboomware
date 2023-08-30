@@ -1,20 +1,20 @@
 { "frames": [
    {
     "filename": "hand 0.ase",
-    "frame": { "x": 0, "y": 0, "w": 326, "h": 304 },
+    "frame": { "x": 0, "y": 0, "w": 603, "h": 629 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 326, "h": 304 },
-    "sourceSize": { "w": 326, "h": 304 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 603, "h": 629 },
+    "sourceSize": { "w": 603, "h": 629 },
     "duration": 100
    },
    {
     "filename": "hand 1.ase",
-    "frame": { "x": 326, "y": 0, "w": 326, "h": 304 },
+    "frame": { "x": 603, "y": 0, "w": 603, "h": 629 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 326, "h": 304 },
-    "sourceSize": { "w": 326, "h": 304 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 603, "h": 629 },
+    "sourceSize": { "w": 603, "h": 629 },
     "duration": 100
    }
  ],
@@ -23,7 +23,7 @@
   "version": "1.2.39-arm64",
   "image": "hand.png",
   "format": "RGBA8888",
-  "size": { "w": 652, "h": 304 },
+  "size": { "w": 1206, "h": 629 },
   "scale": "1",
   "frameTags": [
   ],

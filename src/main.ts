@@ -38,6 +38,7 @@ export type API = {
 	onTimeout: (action: () => void) => void,
 	onEnd: (action: () => void) => void,
 	succeed: () => void,
+	fail: () => void,
 	width: number,
 	height: number,
 	// difficulty: 0 | 1 | 2,
@@ -46,20 +47,30 @@ export type API = {
 export type Game = {
 	prompt: string,
 	author: string,
-	music?: string,
 	onLoad?: (k: GameKaboomCtx) => void,
 	onStart: (k: GameKaboomCtx, api: API) => GameObj,
 }
 
-const root = k.add([])
+const games = [
+	squeezeGame,
+	getFishGame,
+]
+
+let curGame = 0
+let scene = null
+
+function nextGame() {
+	curGame = (curGame + 1) % games.length
+	runGame(games[curGame])
+}
 
 function runGame(g: Game) {
 
-	if (g.music) {
-		// k.play(g.music)
+	if (scene) {
+		scene.destroy()
 	}
 
-	const scene = k.add([])
+	scene = k.add([])
 
 	const gameScene = g.onStart(k, {
 		width: k.width(),
@@ -76,6 +87,11 @@ function runGame(g: Game) {
 		},
 		succeed: () => {
 			// TODO
+			nextGame()
+		},
+		fail: () => {
+			// TODO
+			nextGame()
 		},
 	})
 
@@ -94,9 +110,9 @@ function runGame(g: Game) {
 			width: k.width() - textMargin * 2,
 			lineSpacing: 16,
 			transform: (idx, ch) => ({
-				pos: k.vec2(0, k.wave(-2, 2, k.time() * 4 + idx * 0.5)),
-				scale: k.wave(1, 1.1, k.time() * 3 + idx),
-				angle: k.wave(-3, 3, k.time() * 3 + idx),
+				pos: k.vec2(0, k.wave(-2, 2, k.time() * 6 + idx * 0.5)),
+				scale: k.wave(1, 1.1, k.time() * 6 + idx),
+				angle: k.wave(-3, 3, k.time() * 6 + idx),
 			}),
 		}),
 	])
@@ -104,11 +120,6 @@ function runGame(g: Game) {
 }
 
 async function init() {
-
-	const games = [
-		squeezeGame,
-		getFishGame,
-	]
 
 	for (const g of games) {
 		if (g.onLoad) {
