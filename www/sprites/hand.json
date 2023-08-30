@@ -1,0 +1,36 @@
+{ "frames": [
+   {
+    "filename": "hand 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 326, "h": 304 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 326, "h": 304 },
+    "sourceSize": { "w": 326, "h": 304 },
+    "duration": 100
+   },
+   {
+    "filename": "hand 1.ase",
+    "frame": { "x": 326, "y": 0, "w": 326, "h": 304 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 326, "h": 304 },
+    "sourceSize": { "w": 326, "h": 304 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "hand.png",
+  "format": "RGBA8888",
+  "size": { "w": 652, "h": 304 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 2", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
