@@ -8,6 +8,7 @@
 
 import kaboom from "kaboom"
 import type {
+    EventController,
 	GameObj,
 	KaboomCtx,
 } from "kaboom"
@@ -29,16 +30,17 @@ k.loadFont("apl386", "fonts/apl386.ttf", {
 })
 
 k.loadSound("cool", "sounds/cool.mp3")
+k.loadSound("scream", "sounds/scream.mp3")
 
 // TODO: limit ability
 type GameKaboomCtx = KaboomCtx
 
 export type API = {
-	onActionPress: (action: () => void) => void,
-	onActionRelease: (action: () => void) => void,
-	onActionDown: (action: () => void) => void,
+	onActionPress: (action: () => void) => EventController,
+	onActionRelease: (action: () => void) => EventController,
+	onActionDown: (action: () => void) => EventController,
 	onTimeout: (action: () => void) => void,
-	onEnd: (action: () => void) => void,
+	onEnd: (action: () => void) => EventController,
 	succeed: () => void,
 	fail: () => void,
 	width: number,
@@ -76,6 +78,8 @@ function runGame(g: Game) {
 		k.timer(),
 	])
 
+	const onEndEvent = new k.Event()
+
 	const gameScene = g.onStart(k, {
 		width: k.width(),
 		height: k.height(),
@@ -86,20 +90,21 @@ function runGame(g: Game) {
 		onTimeout: () => {
 			// TODO
 		},
-		onEnd: () => {
-			// TODO
-		},
+		onEnd: (action) => onEndEvent.add(action),
 		succeed: () => {
 			k.play("cool")
 			// TODO
 			scene.wait(2, () => {
 				nextGame()
+				onEndEvent.trigger()
 			})
 		},
 		fail: () => {
+			k.play("scream")
 			// TODO
 			scene.wait(2, () => {
 				nextGame()
+				onEndEvent.trigger()
 			})
 		},
 	})

@@ -90,7 +90,7 @@ const getFishGame: Game = {
 
 		api.onEnd(() => {
 			music.stop()
-			k.camPos(0, 0)
+			k.camPos(k.center())
 			k.camScale(1, 1)
 		})
 
