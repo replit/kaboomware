@@ -15,7 +15,7 @@ import type {
 import squeezeGame from "./squeeze"
 import getFishGame from "./getFish"
 
-const TIME = 4
+const GAME_TIME = 4
 
 const k = kaboom({
 	font: "apl386",
@@ -61,7 +61,7 @@ const games = [
 ]
 
 let curGame = 0
-let scene = null
+const root = k.add()
 
 function nextGame() {
 	curGame = (curGame + 1) % games.length
@@ -70,15 +70,48 @@ function nextGame() {
 
 function runGame(g: Game) {
 
-	if (scene) {
-		scene.destroy()
-	}
+	k.camPos(k.center())
+	k.camRot(0)
+	k.camScale(1, 1)
 
-	scene = k.add([
+	root.removeAll()
+
+	const scene = root.add([
 		k.timer(),
 	])
 
 	const onEndEvent = new k.Event()
+	const onTimeoutEvent = new k.Event()
+	let done = false
+
+	const succeed = () => {
+		if (done) return
+		done = true
+		gameTimer.cancel()
+		onTimeoutEvent.clear()
+		k.play("cool")
+		scene.wait(2, () => {
+			nextGame()
+			onEndEvent.trigger()
+		})
+	}
+
+	const fail = () => {
+		if (done) return
+		done = true
+		gameTimer.cancel()
+		onTimeoutEvent.clear()
+		k.play("scream")
+		scene.wait(2, () => {
+			nextGame()
+			onEndEvent.trigger()
+		})
+	}
+
+	const gameTimer = scene.wait(GAME_TIME, () => {
+		onTimeoutEvent.trigger()
+		fail()
+	})
 
 	const gameScene = g.onStart(k, {
 		width: k.width(),
@@ -87,32 +120,16 @@ function runGame(g: Game) {
 		onActionPress: (action) => scene.onKeyPress("space", action),
 		onActionRelease: (action) => scene.onKeyRelease("space", action),
 		onActionDown: (action) => scene.onKeyDown("space", action),
-		onTimeout: () => {
-			// TODO
-		},
+		onTimeout: (action) => onTimeoutEvent.add(action),
 		onEnd: (action) => onEndEvent.add(action),
-		succeed: () => {
-			k.play("cool")
-			// TODO
-			scene.wait(2, () => {
-				nextGame()
-				onEndEvent.trigger()
-			})
-		},
-		fail: () => {
-			k.play("scream")
-			// TODO
-			scene.wait(2, () => {
-				nextGame()
-				onEndEvent.trigger()
-			})
-		},
+		succeed: succeed,
+		fail: fail,
 	})
 
 	scene.add(gameScene)
 
-	// const speech = new SpeechSynthesisUtterance(g.prompt)
-	// speechSynthesis.speak(speech)
+	const speech = new SpeechSynthesisUtterance(g.prompt)
+	speechSynthesis.speak(speech)
 
 	const textMargin = 20
 

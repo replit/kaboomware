@@ -1,6 +1,6 @@
 import type { Game } from "./main"
 
-const NUM_FLIES = 3
+const NUM_FLIES = 1
 const FLY_SPEED = 400
 const FLY_MARGIN = 160
 
@@ -19,7 +19,7 @@ const squeezeGame: Game = {
 			loop: true,
 			volume: 0.2,
 		})
-		const scene = k.make([])
+		const scene = k.make()
 		scene.add([
 			k.sprite("wall", { width: api.width, height: api.height }),
 		])

@@ -17,7 +17,7 @@ const getFishGame: Game = {
 	onStart: (k, api) => {
 		let gotFish = false
 		let hurt = false
-		const scene = k.make([])
+		const scene = k.make()
 		scene.add([
 			k.sprite("grass", { width: api.width, height: api.height }),
 		])
@@ -62,18 +62,24 @@ const getFishGame: Game = {
 		}
 
 		bao.onCollide("danger", () => {
-			// TODO
 			api.fail()
 			hurt = true
 			bao.play("cry")
 		})
 
 		bao.onCollide("fish", () => {
-			// TODO
 			api.succeed()
 			gotFish = true
 			bao.play("woohoo")
 			fish.play("eaten", { loop: false })
+		})
+
+		api.onTimeout(() => {
+			bao.play("cry")
+			bao.onUpdate(() => {
+				k.camPos(k.camPos().lerp(bao.pos.add(30, -30), k.dt() * 2))
+				k.camScale(k.camScale().lerp(k.vec2(5), k.dt() * 2))
+			})
 		})
 
 		bao.onUpdate(() => {
