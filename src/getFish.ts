@@ -29,7 +29,7 @@ const getFishGame: Game = {
 			"danger",
 		])
 		scene.add([
-			k.pos(160, 160),
+			k.pos(150, 170),
 			k.sprite("cactus", { anim: "woohoo" }),
 			k.area({ scale: 0.5 }),
 			k.anchor("center"),

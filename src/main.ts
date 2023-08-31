@@ -28,6 +28,8 @@ k.loadFont("apl386", "fonts/apl386.ttf", {
 	filter: "linear",
 })
 
+k.loadSound("cool", "sounds/cool.mp3")
+
 // TODO: limit ability
 type GameKaboomCtx = KaboomCtx
 
@@ -88,6 +90,7 @@ function runGame(g: Game) {
 			// TODO
 		},
 		succeed: () => {
+			k.play("cool")
 			// TODO
 			scene.wait(2, () => {
 				nextGame()
