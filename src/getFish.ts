@@ -8,9 +8,10 @@ const getFishGame: Game = {
 	author: "tga",
 	onLoad: (k) => {
 		k.loadSound("walk", "sounds/walk.mp3")
-		k.loadSprite("fish", "sprites/fish.png")
 		k.loadSprite("grass", "sprites/grass.png")
+		k.loadAseprite("fish", "sprites/fish.png", "sprites/fish.json")
 		k.loadAseprite("bao", "sprites/bao.png", "sprites/bao.json")
+		k.loadAseprite("cactus", "sprites/cactus.png", "sprites/cactus.json")
 		k.loadAseprite("fire", "sprites/fire.png", "sprites/fire.json")
 	},
 	onStart: (k, api) => {
@@ -28,6 +29,13 @@ const getFishGame: Game = {
 			"danger",
 		])
 		scene.add([
+			k.pos(160, 160),
+			k.sprite("cactus", { anim: "woohoo" }),
+			k.area({ scale: 0.5 }),
+			k.anchor("center"),
+			"danger",
+		])
+		const fish = scene.add([
 			k.pos(480, 120),
 			k.sprite("fish"),
 			k.area({ scale: 0.6 }),
@@ -65,6 +73,7 @@ const getFishGame: Game = {
 			api.succeed()
 			gotFish = true
 			bao.play("woohoo")
+			fish.play("eaten", { loop: false })
 		})
 
 		bao.onUpdate(() => {

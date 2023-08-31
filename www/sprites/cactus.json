@@ -1,0 +1,39 @@
+{ "frames": [
+   {
+    "filename": "cactus 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 88, "h": 154 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 154 },
+    "sourceSize": { "w": 88, "h": 154 },
+    "duration": 100
+   },
+   {
+    "filename": "cactus 1.ase",
+    "frame": { "x": 88, "y": 0, "w": 88, "h": 154 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 154 },
+    "sourceSize": { "w": 88, "h": 154 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "cactus.png",
+  "format": "RGBA8888",
+  "size": { "w": 176, "h": 154 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "woohoo", "from": 0, "to": 1, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 2", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 3", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
