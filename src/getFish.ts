@@ -14,6 +14,8 @@ const getFishGame: Game = {
 		k.loadAseprite("fire", "sprites/fire.png", "sprites/fire.json")
 	},
 	onStart: (k, api) => {
+		let gotFish = false
+		let hurt = false
 		const scene = k.make([])
 		scene.add([
 			k.sprite("grass", { width: api.width, height: api.height }),
@@ -46,6 +48,7 @@ const getFishGame: Game = {
 		}
 		for (const dir in dirs) {
 			bao.onKeyDown(dir as Key, () => {
+				if (gotFish || hurt) return
 				bao.move(dirs[dir].scale(SPEED))
 			})
 		}
@@ -53,11 +56,22 @@ const getFishGame: Game = {
 		bao.onCollide("danger", () => {
 			// TODO
 			api.fail()
+			hurt = true
+			bao.play("cry")
 		})
 
 		bao.onCollide("fish", () => {
 			// TODO
 			api.succeed()
+			gotFish = true
+			bao.play("woohoo")
+		})
+
+		bao.onUpdate(() => {
+			if (gotFish || hurt) {
+				k.camPos(k.camPos().lerp(bao.pos.add(30, -30), k.dt() * 2))
+				k.camScale(k.camScale().lerp(k.vec2(5), k.dt() * 2))
+			}
 		})
 
 		const music = k.play("walk", {
@@ -67,6 +81,8 @@ const getFishGame: Game = {
 
 		api.onEnd(() => {
 			music.stop()
+			k.camPos(0, 0)
+			k.camScale(1, 1)
 		})
 
 		return scene

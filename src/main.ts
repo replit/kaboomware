@@ -52,8 +52,8 @@ export type Game = {
 }
 
 const games = [
-	squeezeGame,
 	getFishGame,
+	squeezeGame,
 ]
 
 let curGame = 0
@@ -70,7 +70,9 @@ function runGame(g: Game) {
 		scene.destroy()
 	}
 
-	scene = k.add([])
+	scene = k.add([
+		k.timer(),
+	])
 
 	const gameScene = g.onStart(k, {
 		width: k.width(),
@@ -87,11 +89,15 @@ function runGame(g: Game) {
 		},
 		succeed: () => {
 			// TODO
-			nextGame()
+			scene.wait(2, () => {
+				nextGame()
+			})
 		},
 		fail: () => {
 			// TODO
-			nextGame()
+			scene.wait(2, () => {
+				nextGame()
+			})
 		},
 	})
 
