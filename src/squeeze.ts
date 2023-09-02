@@ -5,8 +5,10 @@ const FLY_SPEED = 400
 const FLY_MARGIN = 160
 
 const squeezeGame: Game = {
+
 	prompt: "Squeeze!",
 	author: "tga",
+
 	onLoad: (k) => {
 		k.loadSound("squeeze", "sounds/squeeze.mp3")
 		k.loadSound("fly", "sounds/fly.mp3")
@@ -14,20 +16,25 @@ const squeezeGame: Game = {
 		k.loadAseprite("hand", "sprites/hand.png", "sprites/hand.json")
 		k.loadAseprite("fly", "sprites/fly.png", "sprites/fly.json")
 	},
-	onStart: (k, api) => {
+
+	onStart: (k) => {
+
 		const buzzSound = k.play("fly", {
 			loop: true,
 			volume: 0.2,
 		})
+
 		const scene = k.make()
+
 		scene.add([
-			k.sprite("wall", { width: api.width, height: api.height }),
+			k.sprite("wall", { width: k.width(), height: k.height() }),
 		])
+
 		const makeFly = () => {
 			const fly = k.make([
 				k.pos(
-					k.rand(FLY_MARGIN, api.width - FLY_MARGIN),
-					k.rand(FLY_MARGIN, api.height - FLY_MARGIN),
+					k.rand(FLY_MARGIN, k.width() - FLY_MARGIN),
+					k.rand(FLY_MARGIN, k.height() - FLY_MARGIN),
 				),
 				k.sprite("fly", { anim: "fly" }),
 				k.anchor("center"),
@@ -39,18 +46,23 @@ const squeezeGame: Game = {
 			})
 			return fly
 		}
+
 		for (let i = 0; i < NUM_FLIES; i++) {
 			scene.add(makeFly())
 		}
+
 		const handOffset = k.vec2(-30, -140)
+
 		const hand = scene.add([
 			k.pos(k.mousePos().add(handOffset)),
 			k.sprite("hand"),
 		])
+
 		hand.onUpdate(() => {
 			hand.pos = k.mousePos().add(handOffset)
 		})
-		api.onActionPress(() => {
+
+		k.onActionPress(() => {
 			k.play("squeeze")
 			hand.frame = 1
 			for (const fly of scene.get("fly")) {
@@ -60,20 +72,25 @@ const squeezeGame: Game = {
 					k.addKaboom(fly.pos)
 					if (scene.get("fly").length === 0) {
 						buzzSound.stop()
-						api.succeed()
+						k.succeed()
 					}
 					break
 				}
 			}
 		})
-		api.onActionRelease(() => {
+
+		k.onActionRelease(() => {
 			hand.frame = 0
 		})
-		api.onEnd(() => {
+
+		k.onEnd(() => {
 			buzzSound.stop()
 		})
+
 		return scene
+
 	},
+
 }
 
 export default squeezeGame

@@ -32,27 +32,133 @@ k.loadFont("apl386", "fonts/apl386.ttf", {
 k.loadSound("cool", "sounds/cool.mp3")
 k.loadSound("scream", "sounds/scream.mp3")
 
-// TODO: limit ability
-type GameKaboomCtx = KaboomCtx
+const loadAPIs = [
+	"loadSprite",
+	"loadSpriteAtlas",
+	"loadAseprite",
+	"loadPedit",
+	"loadBean",
+	"loadJSON",
+	"loadSound",
+	"loadFont",
+	"loadBitmapFont",
+	"loadShader",
+	"loadShaderURL",
+	"load",
+	"loadProgress",
+] as const
 
-export type API = {
+const gameAPIs = [
+	"make",
+	"pos",
+	"scale",
+	"rotate",
+	"color",
+	"opacity",
+	"sprite",
+	"text",
+	"rect",
+	"circle",
+	"uvquad",
+	"area",
+	"anchor",
+	"z",
+	"outline",
+	"body",
+	"doubleJump",
+	"move",
+	"offscreen",
+	"follow",
+	"shader",
+	"timer",
+	"fixed",
+	"stay",
+	"health",
+	"lifespan",
+	"state",
+	"fadeIn",
+	"play",
+	"rand",
+	"randi",
+	"dt",
+	"time",
+	"vec2",
+	"rgb",
+	"hsl2rgb",
+	"choose",
+	"chance",
+	"easings",
+	"map",
+	"mapc",
+	"wave",
+	"deg2rad",
+	"rad2deg",
+	"clamp",
+	"mousePos",
+	"mouseDeltaPos",
+	"addKaboom",
+	"camPos",
+	"camScale",
+	"camRot",
+	"center",
+	"isFocused",
+	"isTouchscreen",
+	"LEFT",
+	"RIGHT",
+	"UP",
+	"DOWN",
+] as const
+
+type LoadCtx = Pick<KaboomCtx, typeof loadAPIs[number]>
+
+type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & {
+	/**
+	 * Register an event that runs once when the action button ("space" key or left mouse click) is pressed.
+	 */
 	onActionPress: (action: () => void) => EventController,
+	/**
+	 * Register an event that runs once when the action button ("space" key or left mouse click) is released.
+	 */
 	onActionRelease: (action: () => void) => EventController,
+	/**
+	 * Register an event that runs every frame when the action button ("space" key or left mouse click) is held down.
+	 */
 	onActionDown: (action: () => void) => EventController,
+	/**
+	 * Register an event that runs once when timer runs out.
+	 */
 	onTimeout: (action: () => void) => void,
+	/**
+	 * Register an event that runs once when game ends, either succeeded, failed or timed out.
+	 */
 	onEnd: (action: () => void) => EventController,
+	/**
+	 * Run this when player succeeded in completing the game.
+	 */
 	succeed: () => void,
+	/**
+	 * Run this when player failed.
+	 */
 	fail: () => void,
-	width: number,
-	height: number,
-	// difficulty: 0 | 1 | 2,
+	/**
+	 * Width of the viewport.
+	 */
+	width: () => number,
+	/**
+	 * Height of the viewport.
+	 */
+	height: () => number,
+	/**
+	 * Current difficulty.
+	 */
+	difficulty: 0 | 1 | 2,
 }
 
 export type Game = {
 	prompt: string,
 	author: string,
-	onLoad?: (k: GameKaboomCtx) => void,
-	onStart: (k: GameKaboomCtx, api: API) => GameObj,
+	onLoad?: (k: LoadCtx) => void,
+	onStart: (ctx: GameCtx) => GameObj,
 }
 
 const games = [
@@ -113,18 +219,33 @@ function runGame(g: Game) {
 		fail()
 	})
 
-	const gameScene = g.onStart(k, {
-		width: k.width(),
-		height: k.height(),
-		// TODO: also support click
-		onActionPress: (action) => scene.onKeyPress("space", action),
-		onActionRelease: (action) => scene.onKeyRelease("space", action),
-		onActionDown: (action) => scene.onKeyDown("space", action),
+	const ctx = {}
+
+	for (const api of gameAPIs) {
+		ctx[api] = k[api]
+	}
+
+	const gameScene = g.onStart({
+		...ctx,
+		width: () => k.width(),
+		height: () => k.height(),
+		onActionPress: (action) => k.EventController.join([
+			scene.onKeyPress("space", action),
+			scene.onMousePress("left", action),
+		]),
+		onActionRelease: (action) => k.EventController.join([
+			scene.onKeyRelease("space", action),
+			scene.onMouseRelease("left", action),
+		]),
+		onActionDown: (action) => k.EventController.join([
+			scene.onKeyDown("space", action),
+			scene.onMouseDown("left", action),
+		]),
 		onTimeout: (action) => onTimeoutEvent.add(action),
 		onEnd: (action) => onEndEvent.add(action),
 		succeed: succeed,
 		fail: fail,
-	})
+	} as unknown as GameCtx)
 
 	scene.add(gameScene)
 
@@ -152,9 +273,15 @@ function runGame(g: Game) {
 
 async function init() {
 
+	const ctx = {}
+
+	for (const api of loadAPIs) {
+		ctx[api] = k[api]
+	}
+
 	for (const g of games) {
 		if (g.onLoad) {
-			g.onLoad(k)
+			g.onLoad(ctx as LoadCtx)
 		}
 	}
 

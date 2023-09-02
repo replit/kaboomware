@@ -4,8 +4,10 @@ import type { Game } from "./main"
 const SPEED = 240
 
 const getFishGame: Game = {
+
 	prompt: "Get Fish!",
 	author: "tga",
+
 	onLoad: (k) => {
 		k.loadSound("walk", "sounds/walk.mp3")
 		k.loadSprite("grass", "sprites/grass.png")
@@ -14,13 +16,17 @@ const getFishGame: Game = {
 		k.loadAseprite("cactus", "sprites/cactus.png", "sprites/cactus.json")
 		k.loadAseprite("fire", "sprites/fire.png", "sprites/fire.json")
 	},
-	onStart: (k, api) => {
+
+	onStart: (k) => {
+
 		let gotFish = false
 		let hurt = false
 		const scene = k.make()
+
 		scene.add([
-			k.sprite("grass", { width: api.width, height: api.height }),
+			k.sprite("grass", { width: k.width(), height: k.height() }),
 		])
+
 		scene.add([
 			k.pos(320, 240),
 			k.sprite("fire", { anim: "burn" }),
@@ -28,6 +34,7 @@ const getFishGame: Game = {
 			k.anchor("center"),
 			"danger",
 		])
+
 		scene.add([
 			k.pos(150, 170),
 			k.sprite("cactus", { anim: "woohoo" }),
@@ -35,6 +42,7 @@ const getFishGame: Game = {
 			k.anchor("center"),
 			"danger",
 		])
+
 		const fish = scene.add([
 			k.pos(480, 120),
 			k.sprite("fish"),
@@ -42,18 +50,21 @@ const getFishGame: Game = {
 			k.anchor("center"),
 			"fish",
 		])
+
 		const bao = scene.add([
 			k.pos(120, 380),
 			k.sprite("bao", { anim: "run" }),
 			k.area({ scale: 0.6 }),
 			k.anchor("center"),
 		])
+
 		const dirs = {
 			"left": k.LEFT,
 			"right": k.RIGHT,
 			"up": k.UP,
 			"down": k.DOWN,
 		}
+
 		for (const dir in dirs) {
 			bao.onKeyDown(dir as Key, () => {
 				if (gotFish || hurt) return
@@ -62,19 +73,19 @@ const getFishGame: Game = {
 		}
 
 		bao.onCollide("danger", () => {
-			api.fail()
+			k.fail()
 			hurt = true
 			bao.play("cry")
 		})
 
 		bao.onCollide("fish", () => {
-			api.succeed()
+			k.succeed()
 			gotFish = true
 			bao.play("woohoo")
 			fish.play("eaten", { loop: false })
 		})
 
-		api.onTimeout(() => {
+		k.onTimeout(() => {
 			bao.play("cry")
 			bao.onUpdate(() => {
 				k.camPos(k.camPos().lerp(bao.pos.add(30, -30), k.dt() * 2))
@@ -94,7 +105,7 @@ const getFishGame: Game = {
 			volume: 0.2,
 		})
 
-		api.onEnd(() => {
+		k.onEnd(() => {
 			music.stop()
 			k.camPos(k.center())
 			k.camScale(1, 1)
