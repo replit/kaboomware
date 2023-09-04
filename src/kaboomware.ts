@@ -7,6 +7,13 @@ import type {
 	Key,
 } from "kaboom"
 
+// @ts-ignore
+import apl386FontBytes from "./fonts/apl386.ttf"
+// @ts-ignore
+import coolSoundBytes from "./sounds/cool.mp3"
+// @ts-ignore
+import screamSoundBytes from "./sounds/scream.mp3"
+
 const GAME_TIME = 4
 
 const loadAPIs = [
@@ -154,13 +161,13 @@ export default function run(games: Game[]) {
 		height: 480,
 	})
 
-	k.loadFont("apl386", "fonts/apl386.ttf", {
+	k.loadFont("apl386", apl386FontBytes, {
 		outline: 8,
 		filter: "linear",
 	})
 
-	k.loadSound("cool", "sounds/cool.mp3")
-	k.loadSound("scream", "sounds/scream.mp3")
+	k.loadSound("cool", coolSoundBytes.buffer)
+	k.loadSound("scream", screamSoundBytes.buffer)
 
 	function buttonToKey(btn: Button) {
 		if (btn === "action") return "space"
