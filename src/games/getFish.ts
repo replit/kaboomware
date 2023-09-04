@@ -1,5 +1,5 @@
 import type { Key } from "kaboom"
-import type { Game } from "./main"
+import type { Game, Button } from "./../main"
 
 const SPEED = 240
 
@@ -66,7 +66,7 @@ const getFishGame: Game = {
 		}
 
 		for (const dir in dirs) {
-			bao.onKeyDown(dir as Key, () => {
+			k.onButtonDown(dir as Button, () => {
 				if (gotFish || hurt) return
 				bao.move(dirs[dir].scale(SPEED))
 			})

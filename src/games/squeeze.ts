@@ -1,4 +1,4 @@
-import type { Game } from "./main"
+import type { Game } from "./../main"
 
 const NUM_FLIES = 1
 const FLY_SPEED = 400
@@ -62,9 +62,9 @@ const squeezeGame: Game = {
 			hand.pos = k.mousePos().add(handOffset)
 		})
 
-		k.onActionPress(() => {
+		k.onButtonPress("action", () => {
 			k.play("squeeze")
-			hand.frame = 1
+			hand.play("squeeze")
 			for (const fly of scene.get("fly")) {
 				const pos = hand.pos.sub(handOffset)
 				if (pos.dist(fly.pos) <= 20) {
@@ -79,8 +79,8 @@ const squeezeGame: Game = {
 			}
 		})
 
-		k.onActionRelease(() => {
-			hand.frame = 0
+		k.onButtonRelease("action", () => {
+			hand.play("idle")
 		})
 
 		k.onEnd(() => {

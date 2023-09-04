@@ -26,6 +26,8 @@
   "size": { "w": 1206, "h": 629 },
   "scale": "1",
   "frameTags": [
+   { "name": "idle", "from": 0, "to": 0, "direction": "forward" },
+   { "name": "squeeze", "from": 1, "to": 1, "direction": "forward" }
   ],
   "layers": [
    { "name": "Layer 2", "opacity": 255, "blendMode": "normal" }
