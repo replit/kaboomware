@@ -1,6 +1,6 @@
-import esbuild from "esbuild"
+import * as esbuild from "esbuild"
 
-esbuild.build({
+await esbuild.build({
 	entryPoints: [ "src/kaboomware.ts" ],
 	outfile: "dist/kaboomware.js",
 	bundle: true,
@@ -8,9 +8,8 @@ esbuild.build({
 	keepNames: true,
 	loader: {
 		".png": "dataurl",
-		".glsl": "text",
 		".mp3": "binary",
-		".ttf": "binary",
+		".woff2": "binary",
 	},
 	minify: true,
 })

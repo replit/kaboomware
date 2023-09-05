@@ -2,10 +2,13 @@
 	"compilerOptions": {
 		"noEmit": true,
 		"target": "esnext",
-		"module": "esnext",
 		"moduleResolution": "node",
+		"paths": {
+			"kaboomware": ["./src/kaboomware.ts"]
+		}
 	},
 	"include": [
-		"src/**/*.ts"
+		"src/**/*",
+		"example/**/*"
 	]
 }

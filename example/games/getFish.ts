@@ -1,5 +1,5 @@
 import type { Key } from "kaboom"
-import type { Game, Button } from "./../main"
+import type { Game, Button } from "kaboomware"
 
 const SPEED = 240
 

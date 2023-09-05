@@ -1,17 +1,19 @@
-import esbuild from "esbuild"
+import * as esbuild from "esbuild"
 
 const ctx = await esbuild.context({
 	entryPoints: [ "example/main.ts" ],
-	outfile: "example/bundle.js",
+	outfile: "example/dist/bundle.js",
 	bundle: true,
 	sourcemap: true,
 	keepNames: true,
 	loader: {
 		".png": "dataurl",
-		".glsl": "text",
 		".mp3": "binary",
-		".ttf": "binary",
+		".woff2": "binary",
 	},
+	alias: {
+		"kaboomware": "./src/kaboomware",
+	}
 })
 
 await ctx.watch()

@@ -7,11 +7,8 @@ import type {
 	Key,
 } from "kaboom"
 
-// @ts-ignore
-import apl386FontBytes from "./fonts/apl386.ttf"
-// @ts-ignore
+import apl386FontBytes from "./fonts/apl386.woff2"
 import coolSoundBytes from "./sounds/cool.mp3"
-// @ts-ignore
 import screamSoundBytes from "./sounds/scream.mp3"
 
 const GAME_TIME = 4

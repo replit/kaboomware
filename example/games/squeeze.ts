@@ -1,4 +1,4 @@
-import type { Game } from "./../main"
+import type { Game } from "kaboomware"
 
 const NUM_FLIES = 1
 const FLY_SPEED = 400

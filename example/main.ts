@@ -8,7 +8,7 @@
 
 import squeezeGame from "./games/squeeze"
 import getFishGame from "./games/getFish"
-import run from "./../src/kaboomware"
+import run from "kaboomware"
 
 run([
 	squeezeGame,

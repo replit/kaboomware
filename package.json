@@ -2,12 +2,12 @@
 	"name": "kaboomware",
 	"type": "module",
 	"scripts": {
-		"build": "node build.js",
-		"dev": "node dev.js",
+		"build": "node scripts/build.js",
+		"dev": "node scripts/dev.js",
 		"check": "tsc"
 	},
 	"dependencies": {
-		"kaboom": "^3000.1.5"
+		"kaboom": "^3000.1.6"
 	},
 	"devDependencies": {
 		"esbuild": "^0.19.2",
