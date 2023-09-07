@@ -1,8 +1,9 @@
-import type { Game } from "kaboomware"
+import type { Game, Button } from "kaboomware"
 
 const NUM_FLIES = 1
 const FLY_SPEED = 400
 const FLY_MARGIN = 160
+const SPEED = 240
 
 const squeezeGame: Game = {
 
@@ -58,9 +59,22 @@ const squeezeGame: Game = {
 			k.sprite("hand"),
 		])
 
-		hand.onUpdate(() => {
+		hand.onMouseMove(() => {
 			hand.pos = k.mousePos().add(handOffset)
 		})
+
+		const dirs = {
+			"left": k.LEFT,
+			"right": k.RIGHT,
+			"up": k.UP,
+			"down": k.DOWN,
+		}
+
+		for (const dir in dirs) {
+			k.onButtonDown(dir as Button, () => {
+				hand.move(dirs[dir].scale(SPEED))
+			})
+		}
 
 		k.onButtonPress("action", () => {
 			k.play("squeeze")

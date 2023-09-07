@@ -1,7 +1,7 @@
 import kaboom from "kaboom"
 
 import type {
-    EventController,
+	EventController,
 	GameObj,
 	KaboomCtx,
 	Key,
@@ -75,9 +75,10 @@ const gameAPIs = [
 	"deg2rad",
 	"rad2deg",
 	"clamp",
+	"width",
+	"height",
 	"mousePos",
 	"mouseDeltaPos",
-	"addKaboom",
 	"camPos",
 	"camScale",
 	"camRot",
@@ -88,6 +89,8 @@ const gameAPIs = [
 	"RIGHT",
 	"UP",
 	"DOWN",
+	"addKaboom",
+	"debug",
 ] as const
 
 export type Button =
@@ -129,14 +132,6 @@ export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & {
 	 */
 	fail: () => void,
 	/**
-	 * Width of the viewport.
-	 */
-	width: () => number,
-	/**
-	 * Height of the viewport.
-	 */
-	height: () => number,
-	/**
 	 * Current difficulty.
 	 */
 	difficulty: 0 | 1 | 2,
@@ -154,9 +149,11 @@ export default function run(games: Game[]) {
 	const k = kaboom({
 		font: "apl386",
 		canvas: document.querySelector("#game"),
-		width: 640,
-		height: 480,
+		width: 800,
+		height: 600,
 	})
+
+	// k.setBackground(132, 101, 236)
 
 	k.loadFont("apl386", apl386FontBytes, {
 		outline: 8,
@@ -171,8 +168,71 @@ export default function run(games: Game[]) {
 		return btn
 	}
 
+	const ui = k.add([
+		k.fixed(),
+		k.z(100),
+	])
+	const margin = 20
+
+	const title = ui.add([
+		k.pos(margin, margin),
+		k.scale(1),
+		bounce(),
+		k.text("", {
+			size: 40,
+			width: k.width() - margin * 2,
+			lineSpacing: 16,
+			// transform: (idx, ch) => ({
+				// pos: k.vec2(0, k.wave(-2, 2, k.time() * 6 + idx * 0.5)),
+				// scale: k.wave(1, 1.1, k.time() * 6 + idx),
+				// angle: k.wave(-3, 3, k.time() * 6 + idx),
+			// }),
+		}),
+	])
+
+	function bounce() {
+		let time = 0
+		let bouncing = null
+		return {
+			require: [ "scale" ],
+			bounce(scale: number = 1.2, speed: number = 1) {
+				time = 0
+				bouncing = {
+					scale: scale,
+					speed: speed,
+				}
+			},
+			update() {
+				if (!bouncing) return
+				time += k.dt()
+				let s = k.wave(1, bouncing.scale, time * bouncing.speed)
+				// TODO: why
+				const cycle = (Math.PI * 1.5) / bouncing.speed
+				if (time >= cycle) {
+					bouncing = null
+					time = 0
+					s = 1
+				}
+				this.scaleTo(s)
+			},
+		}
+	}
+
+	// TODO: use title.height
+	const marginTop = 40 + margin * 2 + 4
+	const marginBottom = margin
+	const marginLeft = margin
+	const marginRight = 80
+	const gw = k.width() - marginLeft - marginRight
+	const gh = k.height() - marginTop - marginBottom
+
+	const root = k.add([
+		k.pos(marginLeft, marginTop),
+		k.mask(),
+		k.rect(gw, gh, { radius: 16 }),
+	])
+
 	let curGame = 0
-	const root = k.add()
 
 	function nextGame() {
 		curGame = (curGame + 1) % games.length
@@ -180,6 +240,9 @@ export default function run(games: Game[]) {
 	}
 
 	function runGame(g: Game) {
+
+		title.text = g.prompt
+		title.bounce(2, 4)
 
 		k.camPos(k.center())
 		k.camRot(0)
@@ -232,8 +295,9 @@ export default function run(games: Game[]) {
 
 		const gameScene = g.onStart({
 			...ctx,
-			width: () => k.width(),
-			height: () => k.height(),
+			width: () => root.width,
+			height: () => root.height,
+			mousePos: () => k.mousePos().sub(root.pos),
 			onButtonPress: (btn, action) => scene.onKeyPress(buttonToKey(btn), action),
 			onButtonRelease: (btn, action) => scene.onKeyRelease(buttonToKey(btn), action),
 			onButtonDown: (btn, action) => scene.onKeyDown(buttonToKey(btn), action),
@@ -247,23 +311,6 @@ export default function run(games: Game[]) {
 
 		const speech = new SpeechSynthesisUtterance(g.prompt)
 		speechSynthesis.speak(speech)
-
-		const textMargin = 20
-
-		scene.add([
-			k.pos(textMargin, textMargin),
-			k.z(100),
-			k.text(g.prompt, {
-				size: 40,
-				width: k.width() - textMargin * 2,
-				lineSpacing: 16,
-				transform: (idx, ch) => ({
-					pos: k.vec2(0, k.wave(-2, 2, k.time() * 6 + idx * 0.5)),
-					scale: k.wave(1, 1.1, k.time() * 6 + idx),
-					angle: k.wave(-3, 3, k.time() * 6 + idx),
-				}),
-			}),
-		])
 
 	}
 

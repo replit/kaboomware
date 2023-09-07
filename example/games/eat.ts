@@ -3,9 +3,9 @@ import type { Game, Button } from "kaboomware"
 
 const SPEED = 240
 
-const getFishGame: Game = {
+const eatGame: Game = {
 
-	prompt: "Get Fish!",
+	prompt: "Eat!",
 	author: "tga",
 
 	onLoad: (k) => {
@@ -117,4 +117,4 @@ const getFishGame: Game = {
 
 }
 
-export default getFishGame
+export default eatGame
