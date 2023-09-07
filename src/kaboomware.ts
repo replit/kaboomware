@@ -1,6 +1,6 @@
 import kaboom from "kaboom"
 
-import type {
+import {
 	EventController,
 	GameObj,
 	KaboomCtx,
@@ -102,7 +102,7 @@ export type Button =
 
 export type LoadCtx = Pick<KaboomCtx, typeof loadAPIs[number]>
 
-export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & {
+export type GameAPI = {
 	/**
 	 * Register an event that runs once when a button is pressed.
 	 */
@@ -135,7 +135,10 @@ export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & {
 	 * Current difficulty.
 	 */
 	difficulty: 0 | 1 | 2,
+
 }
+
+export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & GameAPI
 
 export type Game = {
 	prompt: string,
@@ -162,11 +165,6 @@ export default function run(games: Game[]) {
 
 	k.loadSound("cool", coolSoundBytes.buffer)
 	k.loadSound("scream", screamSoundBytes.buffer)
-
-	function buttonToKey(btn: Button) {
-		if (btn === "action") return "space"
-		return btn
-	}
 
 	const ui = k.add([
 		k.fixed(),
@@ -206,8 +204,7 @@ export default function run(games: Game[]) {
 				if (!bouncing) return
 				time += k.dt()
 				let s = k.wave(1, bouncing.scale, time * bouncing.speed)
-				// TODO: why
-				const cycle = (Math.PI * 1.5) / bouncing.speed
+				const cycle = Math.PI * 2 / bouncing.speed
 				if (time >= cycle) {
 					bouncing = null
 					time = 0
@@ -242,7 +239,7 @@ export default function run(games: Game[]) {
 	function runGame(g: Game) {
 
 		title.text = g.prompt
-		title.bounce(2, 4)
+		title.bounce(2, 8)
 
 		k.camPos(k.center())
 		k.camRot(0)
@@ -293,18 +290,47 @@ export default function run(games: Game[]) {
 			ctx[api] = k[api]
 		}
 
-		const gameScene = g.onStart({
-			...ctx,
-			width: () => root.width,
-			height: () => root.height,
-			mousePos: () => k.mousePos().sub(root.pos),
-			onButtonPress: (btn, action) => scene.onKeyPress(buttonToKey(btn), action),
-			onButtonRelease: (btn, action) => scene.onKeyRelease(buttonToKey(btn), action),
-			onButtonDown: (btn, action) => scene.onKeyDown(buttonToKey(btn), action),
+		const api: GameAPI = {
+			onButtonPress: (btn, action) => {
+				if (btn === "action") {
+					return k.EventController.join([
+						scene.onKeyPress("space", action),
+						scene.onMousePress("left", action),
+					])
+				}
+				return scene.onKeyPress(btn, action)
+			},
+			onButtonRelease: (btn, action) => {
+				if (btn === "action") {
+					return k.EventController.join([
+						scene.onKeyRelease("space", action),
+						scene.onMouseRelease("left", action),
+					])
+				}
+				return scene.onKeyRelease(btn, action)
+			},
+			onButtonDown: (btn, action) => {
+				if (btn === "action") {
+					return k.EventController.join([
+						scene.onKeyDown("space", action),
+						scene.onMouseDown("left", action),
+					])
+				}
+				return scene.onKeyDown(btn, action)
+			},
 			onTimeout: (action) => onTimeoutEvent.add(action),
 			onEnd: (action) => onEndEvent.add(action),
 			succeed: succeed,
 			fail: fail,
+			difficulty: 0,
+		}
+
+		const gameScene = g.onStart({
+			...ctx,
+			...api,
+			width: () => root.width,
+			height: () => root.height,
+			mousePos: () => k.mousePos().sub(root.pos),
 		} as unknown as GameCtx)
 
 		scene.add(gameScene)
