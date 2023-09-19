@@ -89,6 +89,26 @@ const gameAPIs = [
 	"center",
 	"isFocused",
 	"isTouchscreen",
+	"drawSprite",
+	"drawText",
+	"formatText",
+	"drawRect",
+	"drawLine",
+	"drawLines",
+	"drawTriangle",
+	"drawCircle",
+	"drawEllipse",
+	"drawUVQuad",
+	"drawPolygon",
+	"drawFormattedText",
+	"drawMasked",
+	"drawSubtracted",
+	"pushTransform",
+	"popTransform",
+	"pushTranslate",
+	"pushScale",
+	"pushRotate",
+	"pushMatrix",
 	"LEFT",
 	"RIGHT",
 	"UP",
@@ -139,7 +159,6 @@ export type GameAPI = {
 	 * Current difficulty.
 	 */
 	difficulty: 0 | 1 | 2,
-
 }
 
 export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & GameAPI
@@ -171,7 +190,14 @@ export type Game = {
 	onStart: (ctx: GameCtx) => GameObj,
 }
 
-export default function run(games: Game[]) {
+export type Opts = {
+	/**
+	 * Development mode (no timer).
+	 */
+	dev?: boolean,
+}
+
+export default function run(games: Game[], opt: Opts = {}) {
 
 	const k = kaboom({
 		font: "apl386o",
@@ -217,7 +243,7 @@ export default function run(games: Game[]) {
 
 	})
 
-	// TODO: scope asset name?
+	// TODO: scope asset name
 	k.loadFont("apl386", apl386FontBytes, { filter: "linear" })
 	k.loadFont("apl386o", apl386FontBytes, { outline: 8, filter: "linear" })
 	k.loadSound("cool", coolSoundBytes.buffer)
@@ -243,6 +269,7 @@ export default function run(games: Game[]) {
 
 	k.onLoad(() => {
 
+		let score = 0
 		let curGame = 0
 
 		function nextGame() {
@@ -251,6 +278,10 @@ export default function run(games: Game[]) {
 		}
 
 		function runGame(g: Game) {
+
+			if (g.prompt.length > 12) {
+				throw new k.KaboomError("Prompt cannot exceed 12 characters!")
+			}
 
 			game.removeAll()
 			curHue = g.hue ?? k.rand(0, 1)
@@ -305,6 +336,12 @@ export default function run(games: Game[]) {
 				k.sprite("timer"),
 				k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
 				k.anchor("center"),
+				k.scale(),
+				{
+					update() {
+						this.scaleTo(k.wave(1, 1.05, k.time() * 8))
+					},
+				}
 			])
 
 			const TIMER_BAR_HEIGHT = 400
@@ -331,7 +368,7 @@ export default function run(games: Game[]) {
 							pos: k.vec2(marginLeft, marginTop),
 							width: gw,
 							height: gh,
-							radius: 8,
+							radius: 16,
 							fill: false,
 							outline: {
 								width: 4,
@@ -356,6 +393,7 @@ export default function run(games: Game[]) {
 				gameTimer.cancel()
 				onTimeoutEvent.clear()
 				k.play("cool")
+				score += 1
 				scene.wait(2, () => {
 					nextGame()
 					onEndEvent.trigger()
@@ -381,13 +419,17 @@ export default function run(games: Game[]) {
 				const r = time / GAME_TIME
 				timerBar.height = TIMER_BAR_HEIGHT * (1 - r)
 				if (r >= 0.6) {
-					timerBar.opacity = k.wave(0.5, 1, time * 40)
+					timerBar.opacity = k.wave(0.5, 1, time * 16)
 				}
 				if (time >= GAME_TIME) {
 					onTimeoutEvent.trigger()
 					fail()
 				}
 			})
+
+			if (opt.dev) {
+				gameTimer.cancel()
+			}
 
 			const ctx = {}
 

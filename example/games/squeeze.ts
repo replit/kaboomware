@@ -17,6 +17,7 @@ const squeezeGame: Game = {
 		k.loadSprite("wall", "sprites/wall.png")
 		k.loadAseprite("hand", "sprites/hand.png", "sprites/hand.json")
 		k.loadAseprite("fly", "sprites/fly.png", "sprites/fly.json")
+		k.loadAseprite("blood", "sprites/blood.png", "sprites/blood.json")
 	},
 
 	onStart: (k) => {
@@ -56,8 +57,9 @@ const squeezeGame: Game = {
 		const handOffset = k.vec2(-30, -140)
 
 		const hand = scene.add([
-			k.pos(k.mousePos().add(handOffset)),
+			k.pos(420, 240),
 			k.sprite("hand"),
+			k.z(10),
 		])
 
 		hand.onMouseMove(() => {
@@ -84,7 +86,13 @@ const squeezeGame: Game = {
 				const pos = hand.pos.sub(handOffset)
 				if (pos.dist(fly.pos) <= 20) {
 					fly.destroy()
-					k.addKaboom(fly.pos)
+					const blood = scene.add([
+						k.pos(fly.pos),
+						k.anchor("center"),
+						k.sprite("blood"),
+					])
+					// TODO: have loop option in sprite()
+					blood.play("splatter", { loop: false, speed: 20 })
 					if (scene.get("fly").length === 0) {
 						buzzSound.stop()
 						k.succeed()

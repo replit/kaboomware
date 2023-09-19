@@ -1,0 +1,55 @@
+{ "frames": [
+   {
+    "filename": "blood 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 123, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 123, "h": 125 },
+    "sourceSize": { "w": 123, "h": 125 },
+    "duration": 100
+   },
+   {
+    "filename": "blood 1.ase",
+    "frame": { "x": 123, "y": 0, "w": 123, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 123, "h": 125 },
+    "sourceSize": { "w": 123, "h": 125 },
+    "duration": 100
+   },
+   {
+    "filename": "blood 2.ase",
+    "frame": { "x": 246, "y": 0, "w": 123, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 123, "h": 125 },
+    "sourceSize": { "w": 123, "h": 125 },
+    "duration": 100
+   },
+   {
+    "filename": "blood 3.ase",
+    "frame": { "x": 369, "y": 0, "w": 123, "h": 125 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 123, "h": 125 },
+    "sourceSize": { "w": 123, "h": 125 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "blood.png",
+  "format": "RGBA8888",
+  "size": { "w": 492, "h": 125 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "splatter", "from": 0, "to": 3, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
