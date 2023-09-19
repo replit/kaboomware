@@ -187,31 +187,32 @@ export default function run(games: Game[]) {
 
 	k.onDraw(() => {
 
-		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.05)
+		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.04)
 		const spr = k.getSprite(curPat)
 
 		if (!spr || !spr.data) return
 
 		const w = spr.data.width
 		const h = spr.data.height
-		const m = 32
-		const p = 100
-		let offset = false
+		const gap = 32
+		const pad = 100
 		const speed = 40
-		const ox = (k.time() * speed) % (w + m)
-		const oy = (k.time() * speed) % (h + m)
+		const ox = (k.time() * speed) % (w + gap)
+		const oy = (k.time() * speed) % (h + gap)
+		let offset = false
 
-		for (let x = -p; x < k.width() + p; x += w + m) {
-			for (let y = -p; y < k.height() + p; y += h + m) {
+		for (let x = -pad; x < k.width() + pad; x += w + gap) {
+			for (let y = -pad; y < k.height() + pad; y += h + gap) {
 				k.drawSprite({
 					sprite: spr.data,
 					color: color,
-					pos: k.vec2(x + ox, y + oy),
+					pos: k.vec2(x + ox, y + oy + (offset ? (h + gap) / 2 : 0)),
 					fixed: true,
 					anchor: "center",
 				})
 			}
-			offset = !offset
+			// TODO: not working
+			// offset = !offset
 		}
 
 	})
@@ -285,11 +286,20 @@ export default function run(games: Game[]) {
 	const gw = k.width() - marginLeft - marginRight
 	const gh = k.height() - marginTop - marginBottom
 
-	// TODO
 	game.add([
 		k.sprite("timer"),
 		k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
 		k.anchor("center"),
+	])
+
+	const TIMER_BAR_HEIGHT = 400
+
+	const timerBar = game.add([
+		k.rect(16, TIMER_BAR_HEIGHT, { radius: 8 }),
+		k.outline(4),
+		k.pos(k.width() - marginRight / 2, k.height() - marginBottom - 88),
+		k.color(k.hsl2rgb(curHue, BG_S, BG_L - 0.15)),
+		k.anchor("bot"),
 	])
 
 	const gameBox = game.add([
@@ -325,10 +335,9 @@ export default function run(games: Game[]) {
 
 	function runGame(g: Game) {
 
-		if (g.hue) {
-			curHue = g.hue
-			k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
-		}
+		curHue = g.hue ?? k.rand(0, 1)
+		k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
+		timerBar.color = k.hsl2rgb(curHue, BG_S, BG_L - 0.15)
 
 		title.text = g.prompt
 		title.bounce(2, 8)
@@ -371,9 +380,15 @@ export default function run(games: Game[]) {
 			})
 		}
 
-		const gameTimer = scene.wait(GAME_TIME, () => {
-			onTimeoutEvent.trigger()
-			fail()
+		let time = 0
+
+		const gameTimer = scene.onUpdate(() => {
+			time += k.dt()
+			timerBar.height = TIMER_BAR_HEIGHT * (1 - time / GAME_TIME)
+			if (time >= GAME_TIME) {
+				onTimeoutEvent.trigger()
+				fail()
+			}
 		})
 
 		const ctx = {}
