@@ -76,6 +76,7 @@ const gameAPIs = [
 	"map",
 	"mapc",
 	"wave",
+	"lerp",
 	"deg2rad",
 	"rad2deg",
 	"clamp",

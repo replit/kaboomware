@@ -12,11 +12,14 @@ const shootGame: Game = {
 		k.loadSprite("desert", "sprites/desert.png")
 		k.loadSprite("cactus2", "sprites/cactus2.png")
 		k.loadSprite("barney", "sprites/barney.png")
+		k.loadSound("shoot", "sounds/shoot.mp3")
 	},
 
 	onStart: (k) => {
 
-		const scene = k.make()
+		const scene = k.make([
+			k.pos(),
+		])
 
 		scene.add([
 			k.sprite("desert", { width: k.width(), height: k.height() }),
@@ -116,7 +119,16 @@ const shootGame: Game = {
 			})
 		})
 
+		let shake = 0
+
+		scene.onUpdate(() => {
+			scene.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(shake)
+			shake = k.lerp(shake, 0, k.dt() * 5)
+		})
+
 		k.onButtonPress("action", () => {
+			k.play("shoot")
+			shake = 16
 			// TODO: bugged
 			if (barney.hasPoint(pos)) {
 				k.succeed()
