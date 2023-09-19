@@ -9,6 +9,7 @@ const squeezeGame: Game = {
 
 	prompt: "Squeeze!",
 	author: "tga",
+	hue: 0.46,
 
 	onLoad: (k) => {
 		k.loadSound("squeeze", "sounds/squeeze.mp3")

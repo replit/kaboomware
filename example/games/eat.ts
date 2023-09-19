@@ -7,6 +7,7 @@ const eatGame: Game = {
 
 	prompt: "Eat!",
 	author: "tga",
+	hue: 0.75,
 
 	onLoad: (k) => {
 		k.loadSound("walk", "sounds/walk.mp3")

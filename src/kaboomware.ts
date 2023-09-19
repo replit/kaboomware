@@ -10,8 +10,12 @@ import {
 import apl386FontBytes from "./fonts/apl386.woff2"
 import coolSoundBytes from "./sounds/cool.mp3"
 import screamSoundBytes from "./sounds/scream.mp3"
+import timerSpriteUrl from "./sprites/timer.png"
+import heartSpriteUrl from "./sprites/heart.png"
 
 const GAME_TIME = 4
+const BG_S = 0.27
+const BG_L = 0.52
 
 const loadAPIs = [
 	"loadSprite",
@@ -141,9 +145,29 @@ export type GameAPI = {
 export type GameCtx = Pick<KaboomCtx, typeof gameAPIs[number]> & GameAPI
 
 export type Game = {
+	/**
+	 * Prompt of the mini game!
+	 */
 	prompt: string,
+	/**
+	 * Name of the author of the game.
+	 */
 	author: string,
+	/**
+	 * Hue of the background color (saturation: 27, lightness: 52)
+	 */
+	hue?: number,
+	/**
+	 * Load assets.
+	 */
 	onLoad?: (k: LoadCtx) => void,
+	/**
+	 * Main entry of the game code. Should return a game object made by `k.make()` that contains the whole game.
+	 *
+	 * @example
+	 * ```js
+	 * ```
+	 */
 	onStart: (ctx: GameCtx) => GameObj,
 }
 
@@ -156,8 +180,43 @@ export default function run(games: Game[]) {
 		height: 600,
 	})
 
-	// k.setBackground(132, 101, 236)
+	let curHue = 0.46
+	let curPat = "heart"
 
+	k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
+
+	k.onDraw(() => {
+
+		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.05)
+		const spr = k.getSprite(curPat)
+
+		if (!spr || !spr.data) return
+
+		const w = spr.data.width
+		const h = spr.data.height
+		const m = 32
+		const p = 100
+		let offset = false
+		const speed = 40
+		const ox = (k.time() * speed) % (w + m)
+		const oy = (k.time() * speed) % (h + m)
+
+		for (let x = -p; x < k.width() + p; x += w + m) {
+			for (let y = -p; y < k.height() + p; y += h + m) {
+				k.drawSprite({
+					sprite: spr.data,
+					color: color,
+					pos: k.vec2(x + ox, y + oy),
+					fixed: true,
+					anchor: "center",
+				})
+			}
+			offset = !offset
+		}
+
+	})
+
+	// TODO: scope asset name?
 	k.loadFont("apl386", apl386FontBytes, {
 		outline: 8,
 		filter: "linear",
@@ -165,17 +224,20 @@ export default function run(games: Game[]) {
 
 	k.loadSound("cool", coolSoundBytes.buffer)
 	k.loadSound("scream", screamSoundBytes.buffer)
+	k.loadSprite("timer", timerSpriteUrl)
+	k.loadSprite("heart", heartSpriteUrl)
 
-	const ui = k.add([
+	const game = k.add([
 		k.fixed(),
-		k.z(100),
 	])
+
 	const margin = 20
 
-	const title = ui.add([
+	const title = game.add([
 		k.pos(margin, margin),
 		k.scale(1),
 		bounce(),
+		k.z(100),
 		k.text("", {
 			size: 40,
 			width: k.width() - margin * 2,
@@ -223,10 +285,35 @@ export default function run(games: Game[]) {
 	const gw = k.width() - marginLeft - marginRight
 	const gh = k.height() - marginTop - marginBottom
 
-	const root = k.add([
+	// TODO
+	game.add([
+		k.sprite("timer"),
+		k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
+		k.anchor("center"),
+	])
+
+	const gameBox = game.add([
 		k.pos(marginLeft, marginTop),
-		k.mask(),
 		k.rect(gw, gh, { radius: 16 }),
+		k.mask(),
+	])
+
+	game.add([
+		{
+			draw() {
+				k.drawRect({
+					pos: k.vec2(marginLeft, marginTop),
+					width: gw,
+					height: gh,
+					radius: 8,
+					fill: false,
+					outline: {
+						width: 4,
+						color: k.rgb(0, 0, 0),
+					},
+				})
+			},
+		}
 	])
 
 	let curGame = 0
@@ -238,6 +325,11 @@ export default function run(games: Game[]) {
 
 	function runGame(g: Game) {
 
+		if (g.hue) {
+			curHue = g.hue
+			k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
+		}
+
 		title.text = g.prompt
 		title.bounce(2, 8)
 
@@ -245,9 +337,9 @@ export default function run(games: Game[]) {
 		k.camRot(0)
 		k.camScale(1, 1)
 
-		root.removeAll()
+		gameBox.removeAll()
 
-		const scene = root.add([
+		const scene = gameBox.add([
 			k.timer(),
 		])
 
@@ -290,6 +382,7 @@ export default function run(games: Game[]) {
 			ctx[api] = k[api]
 		}
 
+		// TODO: custom cam
 		const api: GameAPI = {
 			onButtonPress: (btn, action) => {
 				if (btn === "action") {
@@ -327,16 +420,16 @@ export default function run(games: Game[]) {
 
 		const gameScene = g.onStart({
 			...ctx,
+			width: () => gameBox.width,
+			height: () => gameBox.height,
+			mousePos: () => k.mousePos().sub(gameBox.pos),
 			...api,
-			width: () => root.width,
-			height: () => root.height,
-			mousePos: () => k.mousePos().sub(root.pos),
 		} as unknown as GameCtx)
 
 		scene.add(gameScene)
 
-		const speech = new SpeechSynthesisUtterance(g.prompt)
-		speechSynthesis.speak(speech)
+		// const speech = new SpeechSynthesisUtterance(g.prompt)
+		// speechSynthesis.speak(speech)
 
 	}
 
