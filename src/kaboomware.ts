@@ -174,7 +174,7 @@ export type Game = {
 export default function run(games: Game[]) {
 
 	const k = kaboom({
-		font: "apl386",
+		font: "apl386o",
 		canvas: document.querySelector("#game"),
 		width: 800,
 		height: 600,
@@ -218,38 +218,239 @@ export default function run(games: Game[]) {
 	})
 
 	// TODO: scope asset name?
-	k.loadFont("apl386", apl386FontBytes, {
-		outline: 8,
-		filter: "linear",
-	})
-
+	k.loadFont("apl386", apl386FontBytes, { filter: "linear" })
+	k.loadFont("apl386o", apl386FontBytes, { outline: 8, filter: "linear" })
 	k.loadSound("cool", coolSoundBytes.buffer)
 	k.loadSound("scream", screamSoundBytes.buffer)
 	k.loadSprite("timer", timerSpriteUrl)
 	k.loadSprite("heart", heartSpriteUrl)
 
+	const loadCtx = {}
+
+	for (const api of loadAPIs) {
+		loadCtx[api] = k[api]
+	}
+
+	for (const g of games) {
+		if (g.onLoad) {
+			g.onLoad(loadCtx as LoadCtx)
+		}
+	}
+
 	const game = k.add([
 		k.fixed(),
 	])
 
-	const margin = 20
+	k.onLoad(() => {
 
-	const title = game.add([
-		k.pos(margin, margin),
-		k.scale(1),
-		bounce(),
-		k.z(100),
-		k.text("", {
-			size: 40,
-			width: k.width() - margin * 2,
-			lineSpacing: 16,
-			// transform: (idx, ch) => ({
-				// pos: k.vec2(0, k.wave(-2, 2, k.time() * 6 + idx * 0.5)),
-				// scale: k.wave(1, 1.1, k.time() * 6 + idx),
-				// angle: k.wave(-3, 3, k.time() * 6 + idx),
-			// }),
-		}),
-	])
+		let curGame = 0
+
+		function nextGame() {
+			curGame = (curGame + 1) % games.length
+			runGame(games[curGame])
+		}
+
+		function runGame(g: Game) {
+
+			game.removeAll()
+			curHue = g.hue ?? k.rand(0, 1)
+			k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
+
+			const margin = 20
+
+			const title = game.add([
+				k.pos(margin, margin),
+				k.scale(1),
+				bounce(),
+				k.z(100),
+				k.text(g.prompt, {
+					size: 40,
+					// width: k.width() - margin * 2,
+					lineSpacing: 16,
+					transform: (idx, ch) => ({
+						pos: k.vec2(0, k.wave(-1, 1, k.time() * 4 + idx * 0.5)),
+						scale: k.wave(1, 1.05, k.time() * 4 + idx),
+						angle: k.wave(-2, 2, k.time() * 4 + idx),
+					}),
+				}),
+			])
+
+			// title.bounce(2, 8)
+
+			const author = k.make([
+				k.pos(12, 8),
+				k.text(`by ${g.author}`, { size: 28, font: "apl386" }),
+			])
+
+			const authorBox = game.add([
+				k.pos(margin + title.width + 16, margin + 4),
+				k.rect(
+					author.width + author.pos.x * 2,
+					author.height + author.pos.y * 2,
+					{ radius: 16 },
+				),
+				k.color(k.hsl2rgb(curHue, BG_S, BG_L - 0.15)),
+			])
+
+			authorBox.add(author)
+
+			const marginTop = title.height + margin * 2 + 4
+			const marginBottom = margin
+			const marginLeft = margin
+			const marginRight = 80
+			const gw = k.width() - marginLeft - marginRight
+			const gh = k.height() - marginTop - marginBottom
+
+			game.add([
+				k.sprite("timer"),
+				k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
+				k.anchor("center"),
+			])
+
+			const TIMER_BAR_HEIGHT = 400
+
+			const timerBar = game.add([
+				k.rect(16, TIMER_BAR_HEIGHT, { radius: 8 }),
+				k.outline(4),
+				k.pos(k.width() - marginRight / 2, k.height() - marginBottom - 88),
+				k.color(k.hsl2rgb(curHue, BG_S, BG_L - 0.15)),
+				k.opacity(1),
+				k.anchor("bot"),
+			])
+
+			const gameBox = game.add([
+				k.pos(marginLeft, marginTop),
+				k.rect(gw, gh, { radius: 16 }),
+				k.mask(),
+			])
+
+			game.add([
+				{
+					draw() {
+						k.drawRect({
+							pos: k.vec2(marginLeft, marginTop),
+							width: gw,
+							height: gh,
+							radius: 8,
+							fill: false,
+							outline: {
+								width: 4,
+								color: k.rgb(0, 0, 0),
+							},
+						})
+					},
+				}
+			])
+
+			const scene = gameBox.add([
+				k.timer(),
+			])
+
+			const onEndEvent = new k.Event()
+			const onTimeoutEvent = new k.Event()
+			let done = false
+
+			const succeed = () => {
+				if (done) return
+				done = true
+				gameTimer.cancel()
+				onTimeoutEvent.clear()
+				k.play("cool")
+				scene.wait(2, () => {
+					nextGame()
+					onEndEvent.trigger()
+				})
+			}
+
+			const fail = () => {
+				if (done) return
+				done = true
+				gameTimer.cancel()
+				onTimeoutEvent.clear()
+				k.play("scream")
+				scene.wait(2, () => {
+					nextGame()
+					onEndEvent.trigger()
+				})
+			}
+
+			let time = 0
+
+			const gameTimer = scene.onUpdate(() => {
+				time += k.dt()
+				const r = time / GAME_TIME
+				timerBar.height = TIMER_BAR_HEIGHT * (1 - r)
+				if (r >= 0.6) {
+					timerBar.opacity = k.wave(0.5, 1, time * 40)
+				}
+				if (time >= GAME_TIME) {
+					onTimeoutEvent.trigger()
+					fail()
+				}
+			})
+
+			const ctx = {}
+
+			for (const api of gameAPIs) {
+				ctx[api] = k[api]
+			}
+
+			// TODO: custom cam
+			const api: GameAPI = {
+				onButtonPress: (btn, action) => {
+					if (btn === "action") {
+						return k.EventController.join([
+							scene.onKeyPress("space", action),
+							scene.onMousePress("left", action),
+						])
+					}
+					return scene.onKeyPress(btn, action)
+				},
+				onButtonRelease: (btn, action) => {
+					if (btn === "action") {
+						return k.EventController.join([
+							scene.onKeyRelease("space", action),
+							scene.onMouseRelease("left", action),
+						])
+					}
+					return scene.onKeyRelease(btn, action)
+				},
+				onButtonDown: (btn, action) => {
+					if (btn === "action") {
+						return k.EventController.join([
+							scene.onKeyDown("space", action),
+							scene.onMouseDown("left", action),
+						])
+					}
+					return scene.onKeyDown(btn, action)
+				},
+				onTimeout: (action) => onTimeoutEvent.add(action),
+				onEnd: (action) => onEndEvent.add(action),
+				succeed: succeed,
+				fail: fail,
+				difficulty: 0,
+			}
+
+			const gameScene = g.onStart({
+				...ctx,
+				width: () => gameBox.width,
+				height: () => gameBox.height,
+				mousePos: () => k.mousePos().sub(gameBox.pos),
+				...api,
+			} as unknown as GameCtx)
+
+			scene.add(gameScene)
+
+			// const speech = new SpeechSynthesisUtterance(g.prompt)
+			// speechSynthesis.speak(speech)
+
+		}
+
+		if (games[0]) {
+			runGame(games[0])
+		}
+
+	})
 
 	function bounce() {
 		let time = 0
@@ -276,192 +477,6 @@ export default function run(games: Game[]) {
 				this.scaleTo(s)
 			},
 		}
-	}
-
-	// TODO: use title.height
-	const marginTop = 40 + margin * 2 + 4
-	const marginBottom = margin
-	const marginLeft = margin
-	const marginRight = 80
-	const gw = k.width() - marginLeft - marginRight
-	const gh = k.height() - marginTop - marginBottom
-
-	game.add([
-		k.sprite("timer"),
-		k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
-		k.anchor("center"),
-	])
-
-	const TIMER_BAR_HEIGHT = 400
-
-	const timerBar = game.add([
-		k.rect(16, TIMER_BAR_HEIGHT, { radius: 8 }),
-		k.outline(4),
-		k.pos(k.width() - marginRight / 2, k.height() - marginBottom - 88),
-		k.color(k.hsl2rgb(curHue, BG_S, BG_L - 0.15)),
-		k.anchor("bot"),
-	])
-
-	const gameBox = game.add([
-		k.pos(marginLeft, marginTop),
-		k.rect(gw, gh, { radius: 16 }),
-		k.mask(),
-	])
-
-	game.add([
-		{
-			draw() {
-				k.drawRect({
-					pos: k.vec2(marginLeft, marginTop),
-					width: gw,
-					height: gh,
-					radius: 8,
-					fill: false,
-					outline: {
-						width: 4,
-						color: k.rgb(0, 0, 0),
-					},
-				})
-			},
-		}
-	])
-
-	let curGame = 0
-
-	function nextGame() {
-		curGame = (curGame + 1) % games.length
-		runGame(games[curGame])
-	}
-
-	function runGame(g: Game) {
-
-		curHue = g.hue ?? k.rand(0, 1)
-		k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
-		timerBar.color = k.hsl2rgb(curHue, BG_S, BG_L - 0.15)
-
-		title.text = g.prompt
-		title.bounce(2, 8)
-
-		k.camPos(k.center())
-		k.camRot(0)
-		k.camScale(1, 1)
-
-		gameBox.removeAll()
-
-		const scene = gameBox.add([
-			k.timer(),
-		])
-
-		const onEndEvent = new k.Event()
-		const onTimeoutEvent = new k.Event()
-		let done = false
-
-		const succeed = () => {
-			if (done) return
-			done = true
-			gameTimer.cancel()
-			onTimeoutEvent.clear()
-			k.play("cool")
-			scene.wait(2, () => {
-				nextGame()
-				onEndEvent.trigger()
-			})
-		}
-
-		const fail = () => {
-			if (done) return
-			done = true
-			gameTimer.cancel()
-			onTimeoutEvent.clear()
-			k.play("scream")
-			scene.wait(2, () => {
-				nextGame()
-				onEndEvent.trigger()
-			})
-		}
-
-		let time = 0
-
-		const gameTimer = scene.onUpdate(() => {
-			time += k.dt()
-			timerBar.height = TIMER_BAR_HEIGHT * (1 - time / GAME_TIME)
-			if (time >= GAME_TIME) {
-				onTimeoutEvent.trigger()
-				fail()
-			}
-		})
-
-		const ctx = {}
-
-		for (const api of gameAPIs) {
-			ctx[api] = k[api]
-		}
-
-		// TODO: custom cam
-		const api: GameAPI = {
-			onButtonPress: (btn, action) => {
-				if (btn === "action") {
-					return k.EventController.join([
-						scene.onKeyPress("space", action),
-						scene.onMousePress("left", action),
-					])
-				}
-				return scene.onKeyPress(btn, action)
-			},
-			onButtonRelease: (btn, action) => {
-				if (btn === "action") {
-					return k.EventController.join([
-						scene.onKeyRelease("space", action),
-						scene.onMouseRelease("left", action),
-					])
-				}
-				return scene.onKeyRelease(btn, action)
-			},
-			onButtonDown: (btn, action) => {
-				if (btn === "action") {
-					return k.EventController.join([
-						scene.onKeyDown("space", action),
-						scene.onMouseDown("left", action),
-					])
-				}
-				return scene.onKeyDown(btn, action)
-			},
-			onTimeout: (action) => onTimeoutEvent.add(action),
-			onEnd: (action) => onEndEvent.add(action),
-			succeed: succeed,
-			fail: fail,
-			difficulty: 0,
-		}
-
-		const gameScene = g.onStart({
-			...ctx,
-			width: () => gameBox.width,
-			height: () => gameBox.height,
-			mousePos: () => k.mousePos().sub(gameBox.pos),
-			...api,
-		} as unknown as GameCtx)
-
-		scene.add(gameScene)
-
-		// const speech = new SpeechSynthesisUtterance(g.prompt)
-		// speechSynthesis.speak(speech)
-
-	}
-
-	const loadCtx = {}
-
-	for (const api of loadAPIs) {
-		loadCtx[api] = k[api]
-	}
-
-	for (const g of games) {
-		if (g.onLoad) {
-			g.onLoad(loadCtx as LoadCtx)
-		}
-	}
-
-	if (games[0]) {
-		runGame(games[0])
 	}
 
 }
