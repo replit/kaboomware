@@ -8,5 +8,5 @@ run([
 	squeezeGame,
 	eatGame,
 ], {
-	dev: true,
+	// dev: true,
 })

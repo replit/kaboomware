@@ -11,6 +11,7 @@ const shootGame: Game = {
 	onLoad: (k) => {
 		k.loadSprite("desert", "sprites/desert.png")
 		k.loadSprite("cactus2", "sprites/cactus2.png")
+		k.loadSprite("barney", "sprites/barney.png")
 	},
 
 	onStart: (k) => {
@@ -26,6 +27,14 @@ const shootGame: Game = {
 			k.vec2(480, 120),
 			k.vec2(200, 300),
 		]
+
+		const barneyPos = k.choose(cactusPos).add(20, 10)
+
+		const barney = scene.add([
+			k.sprite("barney"),
+			k.pos(barneyPos),
+			k.area({ shape: new k.Rect(k.vec2(30, 0), 60, 60) }),
+		])
 
 		for (const p of cactusPos) {
 			scene.add([
@@ -105,6 +114,16 @@ const shootGame: Game = {
 					color: k.rgb(100, 100, 100),
 				},
 			})
+		})
+
+		k.onButtonPress("action", () => {
+			// TODO: bugged
+			if (barney.hasPoint(pos)) {
+				k.succeed()
+				console.log("yes")
+			} else {
+				console.log("no")
+			}
 		})
 
 		return scene

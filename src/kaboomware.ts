@@ -115,6 +115,16 @@ const gameAPIs = [
 	"DOWN",
 	"addKaboom",
 	"debug",
+	"Timer",
+	"Line",
+	"Rect",
+	"Circle",
+	"Polygon",
+	"Vec2",
+	"Color",
+	"Mat4",
+	"Quad",
+	"RNG",
 ] as const
 
 export type Button =
