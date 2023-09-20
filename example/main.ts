@@ -10,5 +10,5 @@ run([
 	snipeGame,
 	eatGame,
 ], {
-	dev: true,
+	// dev: true,
 })

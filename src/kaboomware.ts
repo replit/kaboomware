@@ -166,11 +166,11 @@ export type GameAPI = {
 	/**
 	 * Run this when player succeeded in completing the game.
 	 */
-	succeed: () => void,
+	win: () => void,
 	/**
 	 * Run this when player failed.
 	 */
-	fail: () => void,
+	lose: () => void,
 	/**
 	 * Current difficulty.
 	 */
@@ -286,7 +286,20 @@ export default function run(games: Game[], opt: Opts = {}) {
 
 	const game = k.add([
 		k.fixed(),
+		k.pos(),
+		shake(),
 	])
+
+	const redFilter = k.add([
+		k.rect(k.width(), k.height()),
+		k.color(255, 0, 0),
+		k.z(1000),
+		k.opacity(0),
+	])
+
+	redFilter.onUpdate(() => {
+		redFilter.opacity = k.lerp(redFilter.opacity, 0, k.dt())
+	})
 
 	k.onLoad(() => {
 
@@ -408,7 +421,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 			const onTimeoutEvent = new k.Event()
 			let done = false
 
-			const succeed = () => {
+			const win = () => {
 				if (done) return
 				done = true
 				gameTimer.cancel()
@@ -421,8 +434,10 @@ export default function run(games: Game[], opt: Opts = {}) {
 				})
 			}
 
-			const fail = () => {
+			const lose = () => {
 				if (done) return
+				redFilter.opacity = 0.5
+				game.shake(24)
 				done = true
 				gameTimer.cancel()
 				onTimeoutEvent.clear()
@@ -444,7 +459,8 @@ export default function run(games: Game[], opt: Opts = {}) {
 				}
 				if (time >= GAME_TIME) {
 					onTimeoutEvent.trigger()
-					fail()
+					// TODO
+					lose()
 				}
 			})
 
@@ -489,8 +505,8 @@ export default function run(games: Game[], opt: Opts = {}) {
 				},
 				onTimeout: (action) => onTimeoutEvent.add(action),
 				onEnd: (action) => onEndEvent.add(action),
-				succeed: succeed,
-				fail: fail,
+				win: win,
+				lose: lose,
 				difficulty: 0,
 			}
 
@@ -514,6 +530,19 @@ export default function run(games: Game[], opt: Opts = {}) {
 		}
 
 	})
+
+	function shake() {
+		let shake = 0
+		return {
+			shake(s) {
+				shake = s
+			},
+			update() {
+				shake = k.lerp(shake, 0, k.dt() * 8)
+				this.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(shake)
+			},
+		}
+	}
 
 	function bounce() {
 		let time = 0
@@ -541,5 +570,72 @@ export default function run(games: Game[], opt: Opts = {}) {
 			},
 		}
 	}
+
+	function confetti() {
+		for (let i = 0; i < 80; i++) {
+			let speed = k.rand(200, 800)
+			const ospeed = k.rand(0, 0.1)
+			let velY = k.rand(-1200, -2000)
+			const aa = k.rand(2, 8)
+			let acc = 4800
+			const p = game.add([
+				k.pos(0, k.height()),
+				k.choose([
+					k.rect(k.rand(5, 20), k.rand(5, 20)),
+					k.circle(k.rand(3, 10)),
+				]),
+				k.color(k.hsl2rgb(k.rand(), BG_S + 0.2, BG_L + 0.2)),
+				k.opacity(1),
+				k.lifespan(4),
+				k.scale(1),
+				k.anchor("center"),
+				k.rotate(k.rand(0, 360)),
+			])
+			p.onUpdate(() => {
+				acc = k.lerp(acc, 200, k.dt() * 2)
+				p.scale.x = k.wave(-1, 1, k.time() * aa)
+				// p.scale.y = k.wave(-1, 1, k.time() * 10)
+				p.pos.y += velY * k.dt()
+				p.pos.x += k.dt() * speed
+				velY += k.dt() * acc
+				speed = Math.max(speed - k.dt() * 200, 0)
+				p.opacity -= k.dt() * ospeed
+			})
+		}
+		for (let i = 0; i < 80; i++) {
+			let speed = k.rand(200, 800)
+			const ospeed = k.rand(0, 0.1)
+			let velY = k.rand(-1200, -2000)
+			const aa = k.rand(2, 8)
+			let acc = 4800
+			const p = game.add([
+				k.pos(k.width(), k.height()),
+				k.choose([
+					k.rect(k.rand(5, 20), k.rand(5, 20)),
+					k.circle(k.rand(3, 10)),
+				]),
+				k.color(k.hsl2rgb(k.rand(), BG_S + 0.2, BG_L + 0.2)),
+				k.opacity(1),
+				k.lifespan(4),
+				k.scale(1),
+				k.anchor("center"),
+				k.rotate(k.rand(0, 360)),
+			])
+			p.onUpdate(() => {
+				acc = k.lerp(acc, 200, k.dt() * 2)
+				p.scale.x = k.wave(-1, 1, k.time() * aa)
+				// p.scale.y = k.wave(-1, 1, k.time() * 10)
+				p.pos.y += velY * k.dt()
+				p.pos.x -= k.dt() * speed
+				velY += k.dt() * acc
+				speed = Math.max(speed - k.dt() * 200, 0)
+				p.opacity -= k.dt() * ospeed
+			})
+		}
+	}
+
+	// k.onKeyPress("space", () => {
+		// confetti()
+	// })
 
 }

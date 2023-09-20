@@ -95,7 +95,7 @@ const squeezeGame: Game = {
 					blood.play("splatter", { loop: false, speed: 20 })
 					if (scene.get("fly").length === 0) {
 						buzzSound.stop()
-						k.succeed()
+						k.win()
 					}
 					break
 				}

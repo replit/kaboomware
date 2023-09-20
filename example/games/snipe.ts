@@ -131,7 +131,7 @@ const shootGame: Game = {
 			shake = 16
 			// TODO: bugged
 			if (barney.hasPoint(pos)) {
-				k.succeed()
+				k.win()
 				console.log("yes")
 			} else {
 				console.log("no")

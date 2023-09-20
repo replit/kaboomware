@@ -32,6 +32,7 @@ const squeezeGame: Game = {
 			k.pos(400, 200),
 			k.area(),
 			k.z(50),
+			k.anchor("center"),
 		])
 
 		const dirs = {
@@ -54,7 +55,7 @@ const squeezeGame: Game = {
 				k.sprite("meteor", { anim: "fall" }),
 				k.anchor("bot"),
 				k.z(100),
-				k.pos(k.rand(0, k.width()), -100),
+				k.pos(man.pos.x + k.rand(-100, 100), -100),
 			])
 			const shadow = scene.add([])
 			shadow.onDraw(() => {
@@ -74,15 +75,20 @@ const squeezeGame: Game = {
 					scene.add([
 						k.sprite("bang", { anim: "explode", animSpeed: 2, }),
 						k.anchor("center"),
-						k.pos(m.pos.x, m.pos.y),
+						k.pos(m.pos.x, m.pos.y - 10),
 						k.lifespan(0.5),
+						k.area(),
 						k.z(200),
 					])
+					if (man.pos.dist(m.pos) <= 50) {
+						console.log("no")
+						k.lose()
+					}
 				}
 			})
 		})
 
-		// TODO: tell kaboomware timeout = win
+		k.onTimeout(() => k.win())
 
 		return scene
 
@@ -91,4 +97,3 @@ const squeezeGame: Game = {
 }
 
 export default squeezeGame
-

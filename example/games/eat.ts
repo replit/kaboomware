@@ -74,13 +74,13 @@ const eatGame: Game = {
 		}
 
 		bao.onCollide("danger", () => {
-			k.fail()
+			k.lose()
 			hurt = true
 			bao.play("cry")
 		})
 
 		bao.onCollide("fish", () => {
-			k.succeed()
+			k.win()
 			gotFish = true
 			bao.play("woohoo")
 			fish.play("eaten", { loop: false })
