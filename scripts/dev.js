@@ -13,7 +13,7 @@ const ctx = await esbuild.context({
 	},
 	alias: {
 		"kaboomware": "./src/kaboomware",
-	}
+	},
 })
 
 await ctx.watch()

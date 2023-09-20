@@ -1,13 +1,20 @@
 {
 	"name": "kaboomware",
 	"type": "module",
+	"version": "0.1.0",
+	"main": "./dist/kaboomware.js",
+	"types": "./dist/kaboomware.d.ts",
+	"files": [
+		"dist/",
+		"src/"
+	],
 	"scripts": {
-		"build": "node scripts/build.js",
+		"build": "node scripts/build.js && tsc --declaration --emitDeclarationOnly --outDir dist src/*.ts",
 		"dev": "node scripts/dev.js",
 		"check": "tsc"
 	},
 	"dependencies": {
-		"kaboom": "file:../kaboom"
+		"kaboom": "^3000.1.7"
 	},
 	"devDependencies": {
 		"esbuild": "^0.19.2",

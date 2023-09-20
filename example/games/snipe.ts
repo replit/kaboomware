@@ -123,7 +123,7 @@ const shootGame: Game = {
 
 		scene.onUpdate(() => {
 			scene.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(shake)
-			shake = k.lerp(shake, 0, k.dt() * 5)
+			shake = k.lerp(shake, 0, k.dt() * 8)
 		})
 
 		k.onButtonPress("action", () => {

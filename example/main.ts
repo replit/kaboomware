@@ -4,8 +4,8 @@ import eatGame from "./games/eat"
 import snipeGame from "./games/snipe"
 
 run([
-	snipeGame,
 	squeezeGame,
+	snipeGame,
 	eatGame,
 ], {
 	dev: true,

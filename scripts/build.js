@@ -12,4 +12,5 @@ await esbuild.build({
 		".woff2": "binary",
 	},
 	minify: true,
+	format: "esm",
 })
