@@ -7,10 +7,15 @@ import {
 	Key,
 } from "kaboom"
 
+// @ts-ignore
 import apl386FontBytes from "./fonts/apl386.woff2"
+// @ts-ignore
 import coolSoundBytes from "./sounds/cool.mp3"
+// @ts-ignore
 import screamSoundBytes from "./sounds/scream.mp3"
+// @ts-ignore
 import timerSpriteUrl from "./sprites/timer.png"
+// @ts-ignore
 import heartSpriteUrl from "./sprites/heart.png"
 
 const GAME_TIME = 4
@@ -206,6 +211,10 @@ export type Opts = {
 	 * Development mode (no timer).
 	 */
 	dev?: boolean,
+	/**
+	 * Game viewport scale.
+	 */
+	scale?: number,
 }
 
 export default function run(games: Game[], opt: Opts = {}) {
@@ -215,6 +224,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 		canvas: document.querySelector("#game"),
 		width: 800,
 		height: 600,
+		scale: opt.scale ?? 1,
 	})
 
 	let curHue = 0.46

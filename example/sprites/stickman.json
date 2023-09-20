@@ -1,0 +1,45 @@
+{ "frames": [
+   {
+    "filename": "stickman 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 34, "h": 54 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 54 },
+    "sourceSize": { "w": 34, "h": 54 },
+    "duration": 100
+   },
+   {
+    "filename": "stickman 1.ase",
+    "frame": { "x": 34, "y": 0, "w": 34, "h": 54 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 54 },
+    "sourceSize": { "w": 34, "h": 54 },
+    "duration": 100
+   },
+   {
+    "filename": "stickman 2.ase",
+    "frame": { "x": 68, "y": 0, "w": 34, "h": 54 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 34, "h": 54 },
+    "sourceSize": { "w": 34, "h": 54 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "stickman.png",
+  "format": "RGBA8888",
+  "size": { "w": 102, "h": 54 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

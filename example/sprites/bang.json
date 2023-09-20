@@ -1,0 +1,37 @@
+{ "frames": [
+   {
+    "filename": "bang 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 72, "h": 56 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 56 },
+    "sourceSize": { "w": 72, "h": 56 },
+    "duration": 100
+   },
+   {
+    "filename": "bang 1.ase",
+    "frame": { "x": 72, "y": 0, "w": 72, "h": 56 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 72, "h": 56 },
+    "sourceSize": { "w": 72, "h": 56 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "bang.png",
+  "format": "RGBA8888",
+  "size": { "w": 144, "h": 56 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "explode", "from": 0, "to": 1, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

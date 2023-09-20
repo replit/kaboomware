@@ -1,0 +1,55 @@
+{ "frames": [
+   {
+    "filename": "meteor 0.ase",
+    "frame": { "x": 0, "y": 0, "w": 56, "h": 139 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 139 },
+    "sourceSize": { "w": 56, "h": 139 },
+    "duration": 100
+   },
+   {
+    "filename": "meteor 1.ase",
+    "frame": { "x": 56, "y": 0, "w": 56, "h": 139 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 139 },
+    "sourceSize": { "w": 56, "h": 139 },
+    "duration": 100
+   },
+   {
+    "filename": "meteor 2.ase",
+    "frame": { "x": 112, "y": 0, "w": 56, "h": 139 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 139 },
+    "sourceSize": { "w": 56, "h": 139 },
+    "duration": 100
+   },
+   {
+    "filename": "meteor 3.ase",
+    "frame": { "x": 168, "y": 0, "w": 56, "h": 139 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 139 },
+    "sourceSize": { "w": 56, "h": 139 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.39-arm64",
+  "image": "meteor.png",
+  "format": "RGBA8888",
+  "size": { "w": 224, "h": 139 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "fall", "from": 0, "to": 3, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}
