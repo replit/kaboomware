@@ -17,8 +17,23 @@ const shootGame: Game = {
 
 	onStart: (k) => {
 
+		function shake(speed = 8) {
+			let s = 0
+			return {
+				update() {
+					if (s <= 0) return
+					this.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(s)
+					s = k.lerp(s, 0, speed * k.dt())
+				},
+				shake(to: number) {
+					s += to
+				},
+			}
+		}
+
 		const scene = k.make([
 			k.pos(),
+			shake(),
 		])
 
 		scene.add([
@@ -119,16 +134,9 @@ const shootGame: Game = {
 			})
 		})
 
-		let shake = 0
-
-		scene.onUpdate(() => {
-			scene.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(shake)
-			shake = k.lerp(shake, 0, k.dt() * 8)
-		})
-
 		k.onButtonPress("action", () => {
 			k.play("shoot")
-			shake = 16
+			scene.shake(16)
 			// TODO: bugged
 			if (barney.hasPoint(pos)) {
 				k.win()

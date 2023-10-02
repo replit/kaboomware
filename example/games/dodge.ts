@@ -22,6 +22,8 @@ const squeezeGame: Game = {
 			k.timer(),
 		])
 
+		let hurt = false
+
 		scene.add([
 			k.rect(k.width(), k.height()),
 			k.color(k.rgb(255, 255, 255)),
@@ -44,6 +46,7 @@ const squeezeGame: Game = {
 
 		for (const dir in dirs) {
 			k.onButtonDown(dir as Button, () => {
+				if (hurt) return
 				man.move(dirs[dir].scale(SPEED))
 				man.frame = (man.frame + 1) % man.numFrames()
 			})
@@ -81,7 +84,7 @@ const squeezeGame: Game = {
 						k.z(200),
 					])
 					if (man.pos.dist(m.pos) <= 50) {
-						console.log("no")
+						hurt = true
 						k.lose()
 					}
 				}

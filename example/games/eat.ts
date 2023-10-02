@@ -88,17 +88,6 @@ const eatGame: Game = {
 
 		k.onTimeout(() => {
 			bao.play("cry")
-			bao.onUpdate(() => {
-				k.camPos(k.camPos().lerp(bao.pos.add(30, -30), k.dt() * 2))
-				k.camScale(k.camScale().lerp(k.vec2(5), k.dt() * 2))
-			})
-		})
-
-		bao.onUpdate(() => {
-			if (gotFish || hurt) {
-				k.camPos(k.camPos().lerp(bao.pos.add(30, -30), k.dt() * 2))
-				k.camScale(k.camScale().lerp(k.vec2(5), k.dt() * 2))
-			}
 		})
 
 		const music = k.play("walk", {

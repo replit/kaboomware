@@ -158,7 +158,7 @@ export type GameAPI = {
 	/**
 	 * Register an event that runs once when timer runs out.
 	 */
-	onTimeout: (action: () => void) => void,
+	onTimeout: (action: () => void) => EventController,
 	/**
 	 * Register an event that runs once when game ends, either succeeded, failed or timed out.
 	 */
@@ -274,6 +274,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 
 	const loadCtx = {}
 
+	// TODO: report error msg when calling forbidden functions
 	for (const api of loadAPIs) {
 		loadCtx[api] = k[api]
 	}
@@ -290,15 +291,15 @@ export default function run(games: Game[], opt: Opts = {}) {
 		shake(),
 	])
 
-	const redFilter = k.add([
+	const bloodEye = k.add([
 		k.rect(k.width(), k.height()),
 		k.color(255, 0, 0),
 		k.z(1000),
 		k.opacity(0),
 	])
 
-	redFilter.onUpdate(() => {
-		redFilter.opacity = k.lerp(redFilter.opacity, 0, k.dt())
+	bloodEye.onUpdate(() => {
+		bloodEye.opacity = k.lerp(bloodEye.opacity, 0, k.dt())
 	})
 
 	k.onLoad(() => {
@@ -436,7 +437,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 
 			const lose = () => {
 				if (done) return
-				redFilter.opacity = 0.5
+				bloodEye.opacity = 0.5
 				game.shake(24)
 				done = true
 				gameTimer.cancel()
@@ -538,7 +539,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 				shake = s
 			},
 			update() {
-				shake = k.lerp(shake, 0, k.dt() * 8)
+				shake = k.lerp(shake, 0, k.dt() * 4)
 				this.pos = k.Vec2.fromAngle(k.rand(0, 360)).scale(shake)
 			},
 		}

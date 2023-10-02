@@ -5,10 +5,10 @@ import snipeGame from "./games/snipe"
 import dodgeGame from "./games/dodge"
 
 run([
+	eatGame,
 	dodgeGame,
 	squeezeGame,
 	snipeGame,
-	eatGame,
 ], {
-	// dev: true,
+	dev: true,
 })
