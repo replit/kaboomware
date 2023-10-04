@@ -1,7 +1,7 @@
 {
 	"name": "kaboomware",
 	"type": "module",
-	"version": "0.1.1",
+	"version": "0.1.3",
 	"main": "./dist/kaboomware.js",
 	"types": "./dist/kaboomware.d.ts",
 	"files": [

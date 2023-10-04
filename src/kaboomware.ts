@@ -20,8 +20,8 @@ import timerSpriteUrl from "./sprites/timer.png"
 import heartSpriteUrl from "./sprites/heart.png"
 
 const GAME_TIME = 4
-const BG_S = 0.27
-const BG_L = 0.52
+export const BG_S = 0.27
+export const BG_L = 0.52
 
 const loadAPIs = [
 	"loadSprite",
@@ -224,7 +224,12 @@ export type Opts = {
 	maxFPS?: KaboomOpt["maxFPS"],
 }
 
-export default function run(games: Game[], opt: Opts = {}) {
+export type KaboomWareCtx = {
+	onChange: (action: (g: Game) => void) => EventController,
+	curGame: () => Game,
+}
+
+export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx {
 
 	const k = kaboom({
 		...opt,
@@ -232,6 +237,8 @@ export default function run(games: Game[], opt: Opts = {}) {
 		width: 800,
 		height: 600,
 	})
+
+	const onChangeEvent = new k.Event<[Game]>()
 
 	let curHue = 0.46
 	let curPat = "heart"
@@ -313,10 +320,10 @@ export default function run(games: Game[], opt: Opts = {}) {
 		bloodEye.opacity = k.lerp(bloodEye.opacity, 0, k.dt())
 	})
 
-	k.onLoad(() => {
+	let score = 0
+	let curGame = 0
 
-		let score = 0
-		let curGame = 0
+	k.onLoad(() => {
 
 		function nextGame() {
 			curGame = (curGame + 1) % games.length
@@ -324,6 +331,8 @@ export default function run(games: Game[], opt: Opts = {}) {
 		}
 
 		function runGame(g: Game) {
+
+			onChangeEvent.trigger(g)
 
 			if (g.prompt.length > 12) {
 				throw new k.KaboomError("Prompt cannot exceed 12 characters!")
@@ -609,36 +618,7 @@ export default function run(games: Game[], opt: Opts = {}) {
 				p.pos.y += velY * k.dt()
 				p.pos.x += k.dt() * speed
 				velY += k.dt() * acc
-				speed = Math.max(speed - k.dt() * 200, 0)
-				p.opacity -= k.dt() * ospeed
-			})
-		}
-		for (let i = 0; i < 80; i++) {
-			let speed = k.rand(200, 800)
-			const ospeed = k.rand(0, 0.1)
-			let velY = k.rand(-1200, -2000)
-			const aa = k.rand(2, 8)
-			let acc = 4800
-			const p = game.add([
-				k.pos(k.width(), k.height()),
-				k.choose([
-					k.rect(k.rand(5, 20), k.rand(5, 20)),
-					k.circle(k.rand(3, 10)),
-				]),
-				k.color(k.hsl2rgb(k.rand(), BG_S + 0.2, BG_L + 0.2)),
-				k.opacity(1),
-				k.lifespan(4),
-				k.scale(1),
-				k.anchor("center"),
-				k.rotate(k.rand(0, 360)),
-			])
-			p.onUpdate(() => {
-				acc = k.lerp(acc, 200, k.dt() * 2)
-				p.scale.x = k.wave(-1, 1, k.time() * aa)
-				// p.scale.y = k.wave(-1, 1, k.time() * 10)
-				p.pos.y += velY * k.dt()
-				p.pos.x -= k.dt() * speed
-				velY += k.dt() * acc
+				// @ts-ignore
 				speed = Math.max(speed - k.dt() * 200, 0)
 				p.opacity -= k.dt() * ospeed
 			})
@@ -648,5 +628,10 @@ export default function run(games: Game[], opt: Opts = {}) {
 	// k.onKeyPress("space", () => {
 		// confetti()
 	// })
+
+	return {
+		onChange: (action) => onChangeEvent.add(action),
+		curGame: () => games[curGame],
+	}
 
 }

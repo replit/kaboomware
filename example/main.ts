@@ -1,10 +1,10 @@
-import run from "kaboomware"
+import kaboomware from "kaboomware"
 import squeezeGame from "./games/squeeze"
 import eatGame from "./games/eat"
 import snipeGame from "./games/snipe"
 import dodgeGame from "./games/dodge"
 
-run([
+kaboomware([
 	eatGame,
 	dodgeGame,
 	squeezeGame,
