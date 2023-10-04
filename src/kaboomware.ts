@@ -1,6 +1,7 @@
 import kaboom from "kaboom"
 
 import {
+	KaboomOpt,
 	EventController,
 	GameObj,
 	KaboomCtx,
@@ -211,58 +212,29 @@ export type Opts = {
 	 * Development mode (no timer).
 	 */
 	dev?: boolean,
-	/**
-	 * Game viewport scale.
-	 */
-	scale?: number,
+	scale?: KaboomOpt["scale"],
+	letterbox?: KaboomOpt["letterbox"],
+	background?: KaboomOpt["background"],
+	canvas?: KaboomOpt["canvas"],
+	root?: KaboomOpt["root"],
+	stretch?: KaboomOpt["stretch"],
+	pixelDensity?: KaboomOpt["pixelDensity"],
+	crisp?: KaboomOpt["crisp"],
+	gamepads?: KaboomOpt["gamepads"],
+	maxFPS?: KaboomOpt["maxFPS"],
 }
 
 export default function run(games: Game[], opt: Opts = {}) {
 
 	const k = kaboom({
+		...opt,
 		font: "apl386o",
-		canvas: document.querySelector("#game"),
 		width: 800,
 		height: 600,
-		scale: opt.scale ?? 1,
 	})
 
 	let curHue = 0.46
 	let curPat = "heart"
-
-	k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
-
-	k.onDraw(() => {
-
-		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.04)
-		const spr = k.getSprite(curPat)
-
-		if (!spr || !spr.data) return
-
-		const w = spr.data.width
-		const h = spr.data.height
-		const gap = 32
-		const pad = 100
-		const speed = 40
-		const ox = (k.time() * speed) % (w + gap)
-		const oy = (k.time() * speed) % (h + gap)
-		let offset = false
-
-		for (let x = -pad; x < k.width() + pad; x += w + gap) {
-			for (let y = -pad; y < k.height() + pad; y += h + gap) {
-				k.drawSprite({
-					sprite: spr.data,
-					color: color,
-					pos: k.vec2(x + ox, y + oy + (offset ? (h + gap) / 2 : 0)),
-					fixed: true,
-					anchor: "center",
-				})
-			}
-			// TODO: not working
-			// offset = !offset
-		}
-
-	})
 
 	// TODO: scope asset name
 	k.loadFont("apl386", apl386FontBytes, { filter: "linear" })
@@ -290,6 +262,45 @@ export default function run(games: Game[], opt: Opts = {}) {
 		k.pos(),
 		shake(),
 	])
+
+	game.onDraw(() => {
+
+		const bg = k.hsl2rgb(curHue, BG_S, BG_L)
+		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.04)
+		const spr = k.getSprite(curPat)
+
+		if (!spr || !spr.data) return
+
+		const w = spr.data.width
+		const h = spr.data.height
+		const gap = 32
+		const pad = 100
+		const speed = 40
+		const ox = (k.time() * speed) % (w + gap)
+		const oy = (k.time() * speed) % (h + gap)
+		let offset = false
+
+		k.drawRect({
+			width: k.width(),
+			height: k.height(),
+			color: bg,
+		})
+
+		for (let x = -pad; x < k.width() + pad; x += w + gap) {
+			for (let y = -pad; y < k.height() + pad; y += h + gap) {
+				k.drawSprite({
+					sprite: spr.data,
+					color: color,
+					pos: k.vec2(x + ox, y + oy + (offset ? (h + gap) / 2 : 0)),
+					fixed: true,
+					anchor: "center",
+				})
+			}
+			// TODO: not working
+			// offset = !offset
+		}
+
+	})
 
 	const bloodEye = k.add([
 		k.rect(k.width(), k.height()),
@@ -320,7 +331,6 @@ export default function run(games: Game[], opt: Opts = {}) {
 
 			game.removeAll()
 			curHue = g.hue ?? k.rand(0, 1)
-			k.setBackground(k.hsl2rgb(curHue, BG_S, BG_L))
 
 			const margin = 20
 

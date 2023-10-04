@@ -11,4 +11,5 @@ run([
 	snipeGame,
 ], {
 	dev: true,
+	canvas: document.querySelector("#game"),
 })

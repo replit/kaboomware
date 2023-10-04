@@ -8,26 +8,34 @@ A KaboomWare game is just a plain JavaScript object:
 
 ```ts
 const squeezeGame = {
+
     // The prompt for the game that tells player what to do. Normally it'll be just a simple verb.
     prompt: "Squeeze!",
+
     // Name of the author.
     author: "tga",
+
     // Background color hue (0.0 - 1.0).
     hue: 0.46,
+
     // Load assets for the game. The argument k is a limited version of the Kaboom context, only k.loadXXX() functions are enabled here.
     onLoad: (k) => {
         k.loadSound("fly", "sounds/fly.mp3")
         k.loadSprite("hand", "sprites/hand.png")
     },
+
     // Main entry point of the game. This function should return a GameObject that contains the game. The argument k is a limited version of the Kaboom context, plus a set of KaboomWare-specific APIs (see below)
     onStart: (k) => {
+
         // k.add() is disabled, use k.make() to make a game object and return
         const scene = k.make()
+
         // All game objects are added as children of the scene game object
         const hand = scene.add([
             k.pos(420, 240),
             k.sprite("hand"),
         ])
+
         // KaboomWare only supports 1 action button and 4 directional buttons. Use the KaboomWare-specific API k.onButtonXXX()
         k.onButtonPress("action", () => {
             hand.squeeze()
@@ -36,9 +44,12 @@ const squeezeGame = {
                 k.win()
             }
         })
+
         // Return the scene game object here and it'll get mounted to KaboomWare when this game starts.
         return scene
+
     },
+
 }
 ```
 
