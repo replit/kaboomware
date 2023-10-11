@@ -1,23 +1,21 @@
 import kaboom from "kaboom"
 
-import {
+import type {
 	KaboomOpt,
 	EventController,
 	GameObj,
 	KaboomCtx,
 	Key,
+	Color,
+	Vec2,
 } from "kaboom"
 
-// @ts-ignore
 import apl386FontBytes from "./fonts/apl386.woff2"
-// @ts-ignore
 import coolSoundBytes from "./sounds/cool.mp3"
-// @ts-ignore
 import screamSoundBytes from "./sounds/scream.mp3"
-// @ts-ignore
 import timerSpriteUrl from "./sprites/timer.png"
-// @ts-ignore
 import heartSpriteUrl from "./sprites/heart.png"
+import useConfetti from "./confetti"
 
 const GAME_TIME = 4
 export const BG_S = 0.27
@@ -238,6 +236,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 		height: 600,
 	})
 
+	const confetti = useConfetti(k)
 	const onChangeEvent = new k.Event<[Game]>()
 
 	let curHue = 0.46
@@ -590,44 +589,6 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 			},
 		}
 	}
-
-	function confetti() {
-		for (let i = 0; i < 80; i++) {
-			let speed = k.rand(200, 800)
-			const ospeed = k.rand(0, 0.1)
-			let velY = k.rand(-1200, -2000)
-			const aa = k.rand(2, 8)
-			let acc = 4800
-			const p = game.add([
-				k.pos(0, k.height()),
-				k.choose([
-					k.rect(k.rand(5, 20), k.rand(5, 20)),
-					k.circle(k.rand(3, 10)),
-				]),
-				k.color(k.hsl2rgb(k.rand(), BG_S + 0.2, BG_L + 0.2)),
-				k.opacity(1),
-				k.lifespan(4),
-				k.scale(1),
-				k.anchor("center"),
-				k.rotate(k.rand(0, 360)),
-			])
-			p.onUpdate(() => {
-				acc = k.lerp(acc, 200, k.dt() * 2)
-				p.scale.x = k.wave(-1, 1, k.time() * aa)
-				// p.scale.y = k.wave(-1, 1, k.time() * 10)
-				p.pos.y += velY * k.dt()
-				p.pos.x += k.dt() * speed
-				velY += k.dt() * acc
-				// @ts-ignore
-				speed = Math.max(speed - k.dt() * 200, 0)
-				p.opacity -= k.dt() * ospeed
-			})
-		}
-	}
-
-	// k.onKeyPress("space", () => {
-		// confetti()
-	// })
 
 	return {
 		onChange: (action) => onChangeEvent.add(action),
