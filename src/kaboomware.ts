@@ -10,12 +10,18 @@ import type {
 	Vec2,
 } from "kaboom"
 
-import apl386FontBytes from "./fonts/apl386.woff2"
-import coolSoundBytes from "./sounds/cool.mp3"
-import screamSoundBytes from "./sounds/scream.mp3"
-import timerSpriteUrl from "./sprites/timer.png"
-import heartSpriteUrl from "./sprites/heart.png"
 import useConfetti from "./confetti"
+
+// @ts-ignore
+import apl386FontBytes from "./fonts/apl386.woff2"
+// @ts-ignore
+import coolSoundBytes from "./sounds/cool.mp3"
+// @ts-ignore
+import screamSoundBytes from "./sounds/scream.mp3"
+// @ts-ignore
+import timerSpriteUrl from "./sprites/timer.png"
+// @ts-ignore
+import heartSpriteUrl from "./sprites/heart.png"
 
 const GAME_TIME = 4
 export const BG_S = 0.27
@@ -220,6 +226,7 @@ export type Opts = {
 	crisp?: KaboomOpt["crisp"],
 	gamepads?: KaboomOpt["gamepads"],
 	maxFPS?: KaboomOpt["maxFPS"],
+	focus?: KaboomOpt["focus"],
 }
 
 export type KaboomWareCtx = {
@@ -245,8 +252,8 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 	// TODO: scope asset name
 	k.loadFont("apl386", apl386FontBytes, { filter: "linear" })
 	k.loadFont("apl386o", apl386FontBytes, { outline: 8, filter: "linear" })
-	k.loadSound("cool", coolSoundBytes.buffer)
-	k.loadSound("scream", screamSoundBytes.buffer)
+	k.loadSound("cool", coolSoundBytes.buffer.slice(0))
+	k.loadSound("scream", screamSoundBytes.buffer.slice(0))
 	k.loadSprite("timer", timerSpriteUrl)
 	k.loadSprite("heart", heartSpriteUrl)
 
@@ -447,6 +454,23 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 				onTimeoutEvent.clear()
 				k.play("cool")
 				score += 1
+				const conf = {
+					count: 50,
+					color: () => k.hsl2rgb(k.rand(), 0.64, 0.6),
+					velocity: () => k.rand(1000, 4800),
+				}
+				confetti({
+					pos: k.vec2(0, k.height()),
+					spread: 60,
+					heading: 40,
+					...conf,
+				})
+				confetti({
+					pos: k.vec2(k.width(), k.height()),
+					spread: 60,
+					heading: -40,
+					...conf,
+				})
 				scene.wait(2, () => {
 					nextGame()
 					onEndEvent.trigger()

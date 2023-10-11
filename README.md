@@ -1,4 +1,4 @@
-# Making Mini-Games with KaboomWare
+![logo](logo.png)
 
 KaboomWare is a tool for making warioware-like mini games in Kaboom.
 
