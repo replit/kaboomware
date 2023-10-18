@@ -2,6 +2,12 @@
 
 KaboomWare is a tool for making warioware-like mini games in Kaboom.
 
+# NEWS
+
+A Mini-Game GameJam is happening! From Nov. 1 - Nov. 7, make as many mini-games as you can. [Replit](https://replit.com/) is sponsoring **$2000**, **$1000**, **$500** cash prize for the first 3 places!
+
+This README shows how to develop / submit a mini-game with KaboomWare.
+
 ## Developing a Mini Game
 
 A KaboomWare game is just a plain JavaScript object:
@@ -112,8 +118,36 @@ $ open http://localhost:8000
 
 Also try the [Replit template](https://replit.com/@slmjkdbtl/KaboomWare?v=1)
 
-### Caveats
+## Submitting a Mini Game
 
-## Publishing a Mini Game
+1. Fork the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware)
 
-TODO
+2. Clone your fork of kaboomware
+
+```sh
+$ git clone https://github.com/{yourid}/kaboomware
+$ cd kaboomware
+```
+
+2.5 Make a branch for your game
+
+3. Add your game to `games/{yourname}/{gamename}.ts/`
+
+Example:
+
+```sh
+$ mkdir games/jack
+$ code games/jack/pop.ts
+```
+
+4. Run & Test your game
+
+Use `npm run dev` command, plus your name + game file name
+
+```sh
+$ npm run dev jack pop
+```
+
+5. Once you finished a game, submit a PR to the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware), using the naming format: `[Game] Jack - Pop`
+
+One PR should only contain 1 game! Normally a game PR will always go through, unless it's oibviously unplayable.

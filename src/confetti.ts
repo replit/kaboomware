@@ -17,6 +17,7 @@ export type ConfettiOpt = {
 	pos?: Sampler<Vec2>,
 	velocity?: Sampler<number>,
 	angularVelocity?: Sampler<number>,
+	obj?: () => { draw: () => void },
 }
 
 const DEF_COUNT = 80
@@ -33,13 +34,14 @@ const DEF_LIGHTNESS = 0.6
 export default function(k: KaboomCtx) {
 
 	return (opt: ConfettiOpt = {}) => {
+		const confetti = k.make()
 		// @ts-ignore
 		const sample = <T>(s: Sampler<T>): T => typeof s === "function" ? s() : s
 		for (let i = 0; i < (opt.count ?? DEF_COUNT); i++) {
-			const p = k.add([
+			const p = confetti.add([
 				k.pos(sample(opt.pos ?? k.vec2(0, 0))),
-				k.choose([
-					k.rect(k.rand(5, 20), k.rand(5, 20)),
+				opt.obj ? opt.obj() : k.choose([
+					k.rect(k.rand(4, 20), k.rand(4, 20)),
 					k.circle(k.rand(3, 10)),
 				]),
 				k.color(sample(opt.color ?? k.hsl2rgb(k.rand(0, 1), DEF_SATURATION, DEF_LIGHTNESS))),
@@ -72,6 +74,7 @@ export default function(k: KaboomCtx) {
 				p.scale.x = k.wave(-1, 1, k.time() * spin)
 			})
 		}
+		return confetti
 	}
 
 }

@@ -243,7 +243,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 		height: 600,
 	})
 
-	const confetti = useConfetti(k)
+	const makeConfetti = useConfetti(k)
 	const onChangeEvent = new k.Event<[Game]>()
 
 	let curHue = 0.46
@@ -459,18 +459,18 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 					color: () => k.hsl2rgb(k.rand(), 0.64, 0.6),
 					velocity: () => k.rand(1000, 4800),
 				}
-				confetti({
+				k.add(makeConfetti({
 					pos: k.vec2(0, k.height()),
 					spread: 60,
 					heading: 40,
 					...conf,
-				})
-				confetti({
+				}))
+				k.add(makeConfetti({
 					pos: k.vec2(k.width(), k.height()),
 					spread: 60,
 					heading: -40,
 					...conf,
-				})
+				}))
 				scene.wait(2, () => {
 					nextGame()
 					onEndEvent.trigger()
