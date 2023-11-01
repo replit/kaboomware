@@ -126,7 +126,6 @@ const gameAPIs = [
 	"DOWN",
 	"addKaboom",
 	"debug",
-	"Timer",
 	"Line",
 	"Rect",
 	"Circle",
@@ -341,7 +340,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 			onChangeEvent.trigger(g)
 
 			if (g.prompt.length > 12) {
-				throw new k.KaboomError("Prompt cannot exceed 12 characters!")
+				throw new Error("Prompt cannot exceed 12 characters!")
 			}
 
 			game.removeAll()

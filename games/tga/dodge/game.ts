@@ -4,7 +4,7 @@ const SPEED = 240
 const METEOR_SPEED = 480
 const SPAWN_SPEED = 0.2
 
-const squeezeGame: Game = {
+const game: Game = {
 
 	prompt: "Dodge!",
 	author: "tga",
@@ -99,4 +99,4 @@ const squeezeGame: Game = {
 
 }
 
-export default squeezeGame
+export default game

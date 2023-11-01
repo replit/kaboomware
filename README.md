@@ -4,7 +4,9 @@ KaboomWare is a tool for making warioware-like mini games in Kaboom.
 
 # NEWS
 
-A Mini-Game GameJam is happening! From Nov. 1 - Nov. 7, make as many mini-games as you can. [Replit](https://replit.com/) is sponsoring **$2000**, **$1000**, **$500** cash prize for the first 3 places!
+![goodnewseveryone](misc/goodnews.jpg)
+
+A Mini-Game GameJam is happening! From Nov. 1 - Nov. 7, make as many mini-games as you can.
 
 This README shows how to develop / submit a mini-game with KaboomWare.
 
@@ -119,6 +121,8 @@ $ open http://localhost:8000
 Also try the [Replit template](https://replit.com/@slmjkdbtl/KaboomWare?v=1)
 
 ## Submitting a Mini Game
+
+Submit a PR that adds your game file to `games/{yourname}`.
 
 1. Fork the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware)
 

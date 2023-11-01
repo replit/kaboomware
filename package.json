@@ -15,7 +15,7 @@
 		"prepare": "npm run build"
 	},
 	"dependencies": {
-		"kaboom": "^3000.1.12"
+		"kaboom": "^3000.1.14"
 	},
 	"devDependencies": {
 		"esbuild": "^0.19.2",

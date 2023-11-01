@@ -10,7 +10,7 @@ const shootGame: Game = {
 
 	onLoad: (k) => {
 		k.loadSprite("desert", "sprites/desert.png")
-		k.loadSprite("cactus2", "sprites/cactus2.png")
+		k.loadSprite("cactus", "sprites/cactus.png")
 		k.loadSprite("barney", "sprites/barney.png")
 		k.loadSound("shoot", "sounds/shoot.mp3")
 	},
@@ -56,7 +56,7 @@ const shootGame: Game = {
 
 		for (const p of cactusPos) {
 			scene.add([
-				k.sprite("cactus2"),
+				k.sprite("cactus"),
 				k.pos(p),
 			])
 		}
