@@ -2,14 +2,6 @@
 
 KaboomWare is a tool for making warioware-like mini games in Kaboom.
 
-# NEWS
-
-![goodnewseveryone](misc/goodnews.jpg)
-
-A Mini-Game GameJam is happening! From Nov. 1 - Nov. 7, make as many mini-games as you can.
-
-This README shows how to develop / submit a mini-game with KaboomWare.
-
 ## Developing a Mini Game
 
 A KaboomWare game is just a plain JavaScript object:
