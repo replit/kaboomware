@@ -2,7 +2,37 @@
 
 KaboomWare is a tool for making warioware-like mini games in Kaboom.
 
-## Developing a Mini Game
+## Developing & Publishing a Mini Game
+
+1. Create a fork of the KaboomWare
+
+2. Clone your forked repo
+
+```sh
+$ git clone https://github.com/{your_github_id}/kaboomware
+```
+
+3. Install dependencies
+
+```sh
+$ npm install
+```
+
+4. Create a game with
+
+```sh
+$ npm run create {yourname} {gamename}
+```
+
+This will create a folder at `games/{yourname}/{gamename}`
+
+5. Run your game with
+
+```sh
+$ npm run dev {yourname} {gamename}
+```
+
+6. Edit `games/{yourname/{gamename}/main.ts` and start developing the game!
 
 A KaboomWare game is just a plain JavaScript object:
 
@@ -83,67 +113,6 @@ type Button =
     | "down"
 ```
 
-To run the game, use the `kaboomware` pacakge
-
-```ts
-import run from "kaboomware"
-
-run([
-    squeezeGame,
-], {
-    // Dev mode disables the timer, so you can focus on working on the current game
-    dev: true,
-    // Scale of the canvas
-    scale: 1,
-})
-```
-
-For real world examples, check [here](https://github.com/slmjkdbtl/kaboomware/tree/master/example/games).
-
-To run the examples:
-
-```sh
-$ git clone https://github.com/slmjkdbtl/kaboomware
-$ cd kaboomware
-$ npm install
-$ npm run dev
-$ open http://localhost:8000
-```
-
-Also try the [Replit template](https://replit.com/@slmjkdbtl/KaboomWare?v=1)
-
-## Submitting a Mini Game
-
-Submit a PR that adds your game file to `games/{yourname}`.
-
-1. Fork the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware)
-
-2. Clone your fork of kaboomware
-
-```sh
-$ git clone https://github.com/{yourid}/kaboomware
-$ cd kaboomware
-```
-
-2.5 Make a branch for your game
-
-3. Add your game to `games/{yourname}/{gamename}.ts/`
-
-Example:
-
-```sh
-$ mkdir games/jack
-$ code games/jack/pop.ts
-```
-
-4. Run & Test your game
-
-Use `npm run dev` command, plus your name + game file name
-
-```sh
-$ npm run dev jack pop
-```
-
-5. Once you finished a game, submit a PR to the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware), using the naming format: `[Game] Jack - Pop`
+7. Once you finished a game, submit a PR to the [kaboomware github repo](https://github.com/slmjkdbtl/kaboomware), using the naming format: `[Game] {yourname} - {gamename}`
 
 One PR should only contain 1 game! Normally a game PR will always go through, unless it's oibviously unplayable.
