@@ -24,7 +24,10 @@ $ npm install
 $ npm run create {yourname} {gamename}
 ```
 
-This will create a folder at `games/{yourname}/{gamename}`
+This will create a folder at `games/{yourname}/{gamename}`, with
+
+- `main.ts` - Game script
+- `assets/` - All the assets that'll be used for the game
 
 5. Run your game with
 
@@ -50,6 +53,7 @@ const squeezeGame = {
 
     // Load assets for the game. The argument k is a limited version of the Kaboom context, only k.loadXXX() functions are enabled here.
     onLoad: (k) => {
+        k.loadRoot("assets/")
         k.loadSound("fly", "sounds/fly.mp3")
         k.loadSprite("hand", "sprites/hand.png")
     },

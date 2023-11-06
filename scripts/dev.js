@@ -37,7 +37,7 @@ await fs.symlink(path.relative("www", `${dir}/assets`), "www/assets")
 
 await ctx.watch()
 
-const { host, port } = await ctx.serve({
+const { port } = await ctx.serve({
 	servedir: "www",
 })
 
