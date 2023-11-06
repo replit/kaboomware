@@ -30,11 +30,10 @@ const ctx = await esbuild.context({
 	},
 })
 
-// TODO: link all assets
-await fs.unlink("www/sprites")
-await fs.unlink("www/sounds")
-await fs.symlink(path.relative("www", `${dir}/sprites`), "www/sprites")
-await fs.symlink(path.relative("www", `${dir}/sounds`), "www/sounds")
+try {
+	await fs.unlink("www/assets")
+} catch {}
+await fs.symlink(path.relative("www", `${dir}/assets`), "www/assets")
 
 await ctx.watch()
 

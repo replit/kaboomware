@@ -12,6 +12,7 @@ const squeezeGame: Game = {
 	hue: 0.46,
 
 	onLoad: (k) => {
+		k.loadRoot("assets/")
 		k.loadSound("squeeze", "sounds/squeeze.mp3")
 		k.loadSound("fly", "sounds/fly.mp3")
 		k.loadSprite("wall", "sprites/wall.png")

@@ -9,6 +9,7 @@ const shootGame: Game = {
 	hue: 0.5,
 
 	onLoad: (k) => {
+		k.loadRoot("assets/")
 		k.loadSprite("desert", "sprites/desert.png")
 		k.loadSprite("cactus", "sprites/cactus.png")
 		k.loadSprite("barney", "sprites/barney.png")

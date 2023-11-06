@@ -28,6 +28,7 @@ export const BG_S = 0.27
 export const BG_L = 0.52
 
 const loadAPIs = [
+	"loadRoot",
 	"loadSprite",
 	"loadSpriteAtlas",
 	"loadAseprite",
@@ -265,6 +266,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 
 	for (const g of games) {
 		if (g.onLoad) {
+			k.loadRoot("")
 			g.onLoad(loadCtx as LoadCtx)
 		}
 	}

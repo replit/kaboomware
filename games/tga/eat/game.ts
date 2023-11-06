@@ -10,6 +10,7 @@ const eatGame: Game = {
 	hue: 0.75,
 
 	onLoad: (k) => {
+		k.loadRoot("assets/")
 		k.loadSound("walk", "sounds/walk.mp3")
 		k.loadSprite("grass", "sprites/grass.png")
 		k.loadAseprite("fish", "sprites/fish.png", "sprites/fish.json")

@@ -46,8 +46,7 @@ if (await isDir(dir)) {
 }
 
 await fs.mkdir(dir, { recursive: true })
-await fs.mkdir(`${dir}/sprites`, { recursive: true })
-await fs.mkdir(`${dir}/sounds`, { recursive: true })
+await fs.mkdir(`${dir}/assets`, { recursive: true })
 await fs.writeFile(`${dir}/game.ts`, template)
 
 console.log(`Game created at ${dir}!`)

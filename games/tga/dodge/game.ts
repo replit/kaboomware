@@ -11,6 +11,7 @@ const game: Game = {
 	hue: 0.08,
 
 	onLoad: (k) => {
+		k.loadRoot("assets/")
 		k.loadAseprite("stickman", "sprites/stickman.png", "sprites/stickman.json")
 		k.loadAseprite("meteor", "sprites/meteor.png", "sprites/meteor.json")
 		k.loadAseprite("bang", "sprites/bang.png", "sprites/bang.json")
