@@ -12,6 +12,19 @@ if (!author || !game) {
 
 const dir = `games/${author}/${game}`
 
+const code = `
+import kaboomware from "kaboomware"
+import game from "./../${dir}/game"
+
+kaboomware([
+	game,
+], {
+	dev: true,
+	letterbox: true,
+	background: [0, 0, 0],
+})
+`.trim()
+
 const html = `
 <!DOCTYPE html>
 <html>
@@ -24,9 +37,17 @@ const html = `
 </html>
 `.trim()
 
+try {
+	await fs.rm(".tmp", { recursive: true })
+} catch {}
+await fs.mkdir(".tmp", { recursive: true })
+await fs.writeFile(".tmp/main.ts", code)
+await fs.writeFile(".tmp/index.html", html)
+await fs.symlink(path.relative(".tmp", `${dir}/assets`), ".tmp/assets")
+
 const ctx = await esbuild.context({
-	entryPoints: [ "src/dev.ts" ],
-	outfile: "www/bundle.js",
+	entryPoints: [ ".tmp/main.ts" ],
+	outfile: ".tmp/bundle.js",
 	bundle: true,
 	sourcemap: true,
 	keepNames: true,
@@ -36,22 +57,12 @@ const ctx = await esbuild.context({
 		".mp3": "binary",
 		".woff2": "binary",
 	},
-	alias: {
-		"game": `./${dir}/game`,
-	},
 })
-
-try {
-	await fs.rm("www", { recursive: true })
-} catch {}
-await fs.mkdir("www")
-await fs.symlink(path.relative("www", `${dir}/assets`), "www/assets")
-await fs.writeFile("www/index.html", html)
 
 await ctx.watch()
 
 const { port } = await ctx.serve({
-	servedir: "www",
+	servedir: ".tmp",
 })
 
 console.log(`http://localhost:${port}`)
