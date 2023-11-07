@@ -21,8 +21,12 @@ $ npm install
 4. Create a game with
 
 ```sh
-$ npm run create {yourname} {gamename}
+$ npm run create {yourname}:{gamename}
+# for example
+$ npm run create wario:squeeze
 ```
+
+> Note: Game name has to be ASCII characters with no space
 
 This will create a folder at `games/{yourname}/{gamename}`, with
 
@@ -32,7 +36,7 @@ This will create a folder at `games/{yourname}/{gamename}`, with
 5. Run your game with
 
 ```sh
-$ npm run dev {yourname} {gamename}
+$ npm run dev {yourname}:{gamename}
 ```
 
 6. Edit `games/{yourname/{gamename}/main.ts` and start developing the game!

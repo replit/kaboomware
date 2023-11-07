@@ -11,6 +11,7 @@
 	"scripts": {
 		"build": "rm -rf dist && node scripts/build.js && tsc --declaration --emitDeclarationOnly --outDir dist src/kaboomware.ts",
 		"dev": "node scripts/dev.js",
+		"play": "node scripts/play.js",
 		"create": "node scripts/create.js",
 		"check": "tsc",
 		"prepare": "npm run build"

@@ -2,16 +2,27 @@ import * as esbuild from "esbuild"
 import * as fs from "fs/promises"
 import * as path from "path"
 
-const author = process.argv[2]
-const game = process.argv[3]
+const [author, game] = (process.argv[2] ?? "").split(":")
 
 if (!author || !game) {
 	console.error("Must specify author and game name")
-	console.error("$ npm run dev <author> <game>")
+	console.error("$ npm run dev {author}:{game}")
 	process.exit(1)
 }
 
 const dir = `games/${author}/${game}`
+
+const html = `
+<!DOCTYPE html>
+<html>
+<head>
+	<title>kaboomware</title>
+</head>
+<body>
+	<script src="bundle.js" type="module"></script>
+</body>
+</html>
+`.trim()
 
 const ctx = await esbuild.context({
 	entryPoints: [ "src/dev.ts" ],
@@ -31,9 +42,11 @@ const ctx = await esbuild.context({
 })
 
 try {
-	await fs.unlink("www/assets")
+	await fs.rm("www", { recursive: true })
 } catch {}
+await fs.mkdir("www")
 await fs.symlink(path.relative("www", `${dir}/assets`), "www/assets")
+await fs.writeFile("www/index.html", html)
 
 await ctx.watch()
 

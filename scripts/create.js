@@ -1,11 +1,10 @@
 import * as fs from "fs/promises"
 
-const author = process.argv[2]
-const game = process.argv[3]
+const [author, game] = (process.argv[2] ?? "").split(":")
 
 if (!author || !game) {
 	console.error("Must specify author and game name")
-	console.error("$ npm run dev <author> <game>")
+	console.error("$ npm run create {author}:{game}")
 	process.exit(1)
 }
 
