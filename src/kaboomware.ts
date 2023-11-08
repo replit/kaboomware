@@ -198,6 +198,10 @@ export type Game = {
 	 */
 	hue?: number,
 	/**
+	 * Assets URL prefix.
+	 */
+	urlPrefix?: string,
+	/**
 	 * Load assets.
 	 */
 	onLoad?: (k: LoadCtx) => void,
@@ -243,19 +247,20 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 		height: 600,
 	})
 
+	const origK = { ...k }
+
 	const makeConfetti = useConfetti(k)
 	const onChangeEvent = new k.Event<[Game]>()
 
 	let curHue = 0.46
 	let curPat = "heart"
 
-	// TODO: scope asset name
 	k.loadFont("apl386", apl386FontBytes, { filter: "linear" })
 	k.loadFont("apl386o", apl386FontBytes, { outline: 8, filter: "linear" })
-	k.loadSound("cool", coolSoundBytes.buffer.slice(0))
-	k.loadSound("scream", screamSoundBytes.buffer.slice(0))
-	k.loadSprite("timer", timerSpriteUrl)
-	k.loadSprite("heart", heartSpriteUrl)
+	k.loadSound("@cool", coolSoundBytes.buffer.slice(0))
+	k.loadSound("@scream", screamSoundBytes.buffer.slice(0))
+	k.loadSprite("@timer", timerSpriteUrl)
+	k.loadSprite("@heart", heartSpriteUrl)
 
 	const loadCtx = {}
 
@@ -264,11 +269,52 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 		loadCtx[api] = k[api]
 	}
 
+	const getGameID = (g: Game) => `${g.author}:${g.prompt}`
+
+	// TODO: scope assets name
 	for (const g of games) {
+
 		if (g.onLoad) {
-			k.loadRoot("")
+
+			// patch loadXXX() functions to scoped asset names
+			const loaders = [
+				"loadSprite",
+				"loadSpriteAtlas",
+				"loadAseprite",
+				"loadPedit",
+				"loadJSON",
+				"loadSound",
+				"loadFont",
+				"loadBitmapFont",
+				"loadShader",
+				"loadShaderURL",
+			]
+
+			for (const loader of loaders) {
+				loadCtx[loader] = (name, ...args) => {
+					if (typeof name === "string") {
+						name = getGameID(g) + name
+					}
+					return k[loader](name, ...args)
+				}
+			}
+
+			// patch loadRoot() to consider g.urlPrefix
+			if (g.urlPrefix) {
+				loadCtx["loadRoot"] = (p) => {
+					if (p) k.loadRoot(g.urlPrefix + p)
+					return k.loadRoot().slice(g.urlPrefix.length)
+				}
+				k.loadRoot(g.urlPrefix)
+			} else {
+				k.loadRoot("")
+			}
+
 			g.onLoad(loadCtx as LoadCtx)
+			loadCtx["loadRoot"] = k.loadRoot
+
 		}
+
 	}
 
 	const game = k.add([
@@ -281,7 +327,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 
 		const bg = k.hsl2rgb(curHue, BG_S, BG_L)
 		const color = k.hsl2rgb(curHue, BG_S, BG_L - 0.04)
-		const spr = k.getSprite(curPat)
+		const spr = k.getSprite("@" + curPat)
 
 		if (!spr || !spr.data) return
 
@@ -394,7 +440,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 			const gh = k.height() - marginTop - marginBottom
 
 			game.add([
-				k.sprite("timer"),
+				k.sprite("@timer"),
 				k.pos(k.width() - marginRight / 2, k.height() - marginBottom * 3),
 				k.anchor("center"),
 				k.scale(),
@@ -453,7 +499,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 				done = true
 				gameTimer.cancel()
 				onTimeoutEvent.clear()
-				k.play("cool")
+				k.play("@cool")
 				score += 1
 				const conf = {
 					count: 50,
@@ -485,7 +531,7 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 				done = true
 				gameTimer.cancel()
 				onTimeoutEvent.clear()
-				k.play("scream")
+				k.play("@scream")
 				scene.wait(2, () => {
 					nextGame()
 					onEndEvent.trigger()
@@ -552,6 +598,23 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 				win: win,
 				lose: lose,
 				difficulty: 0,
+			}
+
+			// patch getXXX() functions to scoped asset names
+			const getters = [
+				"getSprite",
+				"getSound",
+				"getFont",
+				"getBitmapFont",
+				"getShader",
+				"getAsset",
+			]
+
+			for (const getter of getters) {
+				k[getter] = (name: string) => {
+					name = name.startsWith("@") ? name : getGameID(g) + name
+					return origK[getter](name)
+				}
 			}
 
 			const gameScene = g.onStart({

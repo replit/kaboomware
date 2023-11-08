@@ -18,7 +18,7 @@
 		"clean": "rm -rf .tmp"
 	},
 	"dependencies": {
-		"kaboom": "^3000.1.14"
+		"kaboom": "file:../kaboom"
 	},
 	"devDependencies": {
 		"esbuild": "^0.19.2",

@@ -2,7 +2,15 @@ import * as esbuild from "esbuild"
 import * as fs from "fs/promises"
 import * as path from "path"
 
-const games = process.argv.slice(2)
+const games = process.argv.slice(2).map((g) => {
+	const [author, game] = g.split(":")
+	if (!author || !game) {
+		console.error("Incorrect format")
+		console.error("$ npm run play {author}:{game} {author}:{game} ...")
+		process.exit(1)
+	}
+	return { author, game }
+})
 
 if (games.length === 0) {
 	process.exit(0)
@@ -11,18 +19,14 @@ if (games.length === 0) {
 const code = `
 import kaboomware from "kaboomware"
 
-${games.map((g, i) => {
-	const [author, game] = g.split(":")
-	if (!author || !game) {
-		console.error("Incorrect format")
-		console.error("$ npm run play {author}:{game} {author}:{game} ...")
-		process.exit(1)
-	}
+${games.map(({ author, game }, i) => {
 	return `import game${i} from "./../games/${author}/${game}/game"`
 }).join("\n")}
 
 kaboomware([
-${games.map((_, i) => `\tgame${i},`).join("\n")}
+${games.map(({ author, game }, i) => {
+	return `\t{ ...game${i}, urlPrefix: "games/${author}/${game}/" },`
+}).join("\n")}
 ], {
 	letterbox: true,
 	background: [0, 0, 0],
@@ -47,6 +51,7 @@ try {
 await fs.mkdir(".tmp", { recursive: true })
 await fs.writeFile(".tmp/main.ts", code)
 await fs.writeFile(".tmp/index.html", html)
+await fs.symlink(path.relative(".tmp", "games"), ".tmp/games")
 
 // TODO: assets
 
