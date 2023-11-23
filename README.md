@@ -55,6 +55,9 @@ const squeezeGame = {
     // Background color hue (0.0 - 1.0).
     hue: 0.46,
 
+    // How long you want the game to run for.
+    timer: 4,
+
     // Load assets for the game. The argument k is a limited version of the Kaboom context, only k.loadXXX() functions are enabled here.
     onLoad: (k) => {
         k.loadRoot("assets/")
