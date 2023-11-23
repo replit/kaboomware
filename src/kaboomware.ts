@@ -23,7 +23,7 @@ import timerSpriteUrl from "./sprites/timer.png"
 // @ts-ignore
 import heartSpriteUrl from "./sprites/heart.png"
 
-const GAME_TIME = 4
+const DEFAULT_GAME_TIME = 4
 export const BG_S = 0.27
 export const BG_L = 0.52
 
@@ -201,6 +201,10 @@ export type Game = {
 	 * Assets URL prefix.
 	 */
 	urlPrefix?: string,
+  /** 
+   * The length of this game's timer in seconds (defaults to 4)
+   */
+  timer?: number,
 	/**
 	 * Load assets.
 	 */
@@ -395,6 +399,8 @@ export default function kaboomware(games: Game[], opt: Opts = {}): KaboomWareCtx
 			curHue = g.hue ?? k.rand(0, 1)
 
 			const margin = 20
+
+      const GAME_TIME = g.timer ?? DEFAULT_GAME_TIME;
 
 			const title = game.add([
 				k.pos(margin, margin),
