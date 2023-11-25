@@ -9,7 +9,7 @@ KaboomWare is a tool for making warioware-like mini games in Kaboom.
 2. Clone your forked repo
 
 ```sh
-$ git clone https://github.com/{your_github_id}/kaboomware
+$ git clone https://github.com/ForTheFire/kaboomware
 ```
 
 3. Install dependencies
